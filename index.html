@@ -3,20 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ultimate Nitro Diag - Bible Absolue 3.5cm³</title>
+    <title>Ultimate Nitro Bible - Master Diag 3.5cm³</title>
     <style>
         :root {
-            --bg-color: #090d16;
-            --card-bg: #131c2e;
-            --text-main: #f1f5f9;
+            --bg-color: #060913;
+            --card-bg: #0f1626;
+            --text-main: #f8fafc;
             --text-muted: #64748b;
-            --accent: #ff6b00;
-            --accent-hover: #e05e00;
+            --accent: #ff5500;
+            --accent-hover: #dd4400;
             --border: #1e293b;
             --success: #10b981;
             --danger: #ef4444;
             --warning: #f59e0b;
             --purple: #8b5cf6;
+            --blue: #3b82f6;
         }
 
         * {
@@ -30,36 +31,40 @@
             background-color: var(--bg-color);
             color: var(--text-main);
             padding: 15px;
-            line-height: 1.6;
+            line-height: 1.5;
         }
 
         .container {
-            max-width: 1400px;
+            max-width: 1600px;
             margin: 0 auto;
         }
 
         header {
             text-align: center;
             margin-bottom: 25px;
-            padding: 20px 0;
-            border-bottom: 2px dashed var(--border);
+            padding: 30px 20px;
+            border-bottom: 2px solid var(--border);
+            background: linear-gradient(to bottom, #0f1626, var(--bg-color));
+            border-radius: 12px;
         }
 
         header h1 {
             color: var(--accent);
-            font-size: 2.3rem;
+            font-size: 2.5rem;
             text-transform: uppercase;
             letter-spacing: 1px;
+            font-weight: 900;
         }
 
         header p {
             color: var(--text-muted);
-            margin-top: 5px;
+            margin-top: 8px;
+            font-size: 1.1rem;
         }
 
         .quick-rules {
-            background: rgba(255, 107, 0, 0.08);
-            border-left: 5px solid var(--accent);
+            background: rgba(255, 85, 0, 0.05);
+            border-left: 4px solid var(--accent);
             padding: 15px;
             border-radius: 6px;
             margin-bottom: 25px;
@@ -72,19 +77,18 @@
             border-radius: 10px;
             margin-bottom: 25px;
             border: 1px solid var(--border);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.4);
         }
 
         .search-box {
             width: 100%;
-            padding: 14px;
+            padding: 15px;
             background-color: var(--bg-color);
             border: 1px solid var(--border);
             border-radius: 8px;
             color: var(--text-main);
             margin-bottom: 20px;
             font-size: 1rem;
-            transition: border-color 0.2s;
         }
 
         .search-box:focus {
@@ -93,18 +97,19 @@
         }
 
         .filter-title {
-            font-size: 1rem;
+            font-size: 0.9rem;
             margin-bottom: 12px;
-            font-weight: 600;
+            font-weight: 700;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
-            color: var(--text-muted);
+            letter-spacing: 1px;
+            color: var(--accent);
         }
 
         .btn-group {
             display: flex;
             flex-wrap: wrap;
             gap: 8px;
+            margin-bottom: 15px;
         }
 
         .btn {
@@ -115,19 +120,14 @@
             border-radius: 6px;
             cursor: pointer;
             transition: all 0.2s;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
+            font-weight: 600;
         }
 
-        .btn:hover {
+        .btn:hover, .btn.active {
             border-color: var(--accent);
-            background-color: rgba(255, 107, 0, 0.05);
-        }
-
-        .btn.active {
             background-color: var(--accent);
             color: white;
-            border-color: var(--accent);
-            font-weight: 600;
         }
 
         .grid {
@@ -136,16 +136,8 @@
             gap: 20px;
         }
 
-        @media (min-width: 900px) {
-            .grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-        }
-        @media (min-width: 1300px) {
-            .grid {
-                grid-template-columns: repeat(3, 1fr);
-            }
-        }
+        @media (min-width: 768px) { .grid { grid-template-columns: repeat(2, 1fr); } }
+        @media (min-width: 1200px) { .grid { grid-template-columns: repeat(3, 1fr); } }
 
         .card {
             background-color: var(--card-bg);
@@ -155,7 +147,7 @@
             display: flex;
             flex-direction: column;
             justify-content: space-between;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
         }
 
         .card-header {
@@ -168,12 +160,13 @@
 
         .symptom-title {
             font-size: 1.1rem;
-            font-weight: 600;
+            font-weight: 700;
             color: #ffffff;
+            line-height: 1.4;
         }
 
         .badge {
-            font-size: 0.7rem;
+            font-size: 0.65rem;
             padding: 4px 8px;
             border-radius: 4px;
             font-weight: 800;
@@ -182,12 +175,8 @@
             letter-spacing: 0.5px;
         }
 
-        .badge-haut { background: rgba(239, 68, 68, 0.15); color: var(--danger); border: 1px solid var(--danger); }
-        .badge-bas { background: rgba(59, 130, 246, 0.15); color: #3b82f6; border: 1px solid #3b82f6; }
-        .badge-ralenti2t { background: rgba(139, 92, 246, 0.15); color: #a78bfa; border: 1px solid #8b5cf6; }
-        .badge-prises-air { background: rgba(20, 184, 166, 0.15); color: #2dd4bf; border: 1px solid #14b8a6; }
-        .badge-mecanique { background: rgba(14, 165, 233, 0.15); color: #38bdf8; border: 1px solid #0ea5e9; }
-        .badge-improbable { background: rgba(244, 63, 94, 0.15); color: #fb7185; border: 1px solid #f43f5e; }
+        .badge-standard { background: rgba(59, 130, 246, 0.15); color: var(--blue); border: 1px solid var(--blue); }
+        .badge-advanced { background: rgba(139, 92, 246, 0.15); color: var(--purple); border: 1px solid var(--purple); }
 
         .section-block {
             margin-top: 10px;
@@ -196,7 +185,7 @@
         }
 
         .section-title {
-            font-size: 0.8rem;
+            font-size: 0.75rem;
             text-transform: uppercase;
             letter-spacing: 0.5px;
             color: var(--text-muted);
@@ -204,240 +193,286 @@
             font-weight: 700;
         }
 
+        .phenomenon-text {
+            color: #94a3b8;
+            font-size: 0.88rem;
+            font-style: italic;
+            background: rgba(0,0,0,0.2);
+            padding: 8px;
+            border-radius: 4px;
+            margin-bottom: 6px;
+        }
+
         .diagnosis-text {
             color: #cbd5e1;
-            font-size: 0.95rem;
+            font-size: 0.92rem;
         }
 
         .action-box {
-            background-color: rgba(16, 185, 129, 0.06);
-            border: 1px dashed rgba(16, 185, 129, 0.25);
+            background-color: rgba(16, 185, 129, 0.05);
+            border: 1px dashed rgba(16, 185, 129, 0.3);
             border-radius: 6px;
             padding: 12px;
             margin-top: 15px;
             color: #ecfdf5;
-            font-size: 0.95rem;
+            font-size: 0.92rem;
         }
 
         .action-box strong {
             color: var(--success);
         }
 
-        .hidden {
-            display: none !important;
-        }
-
-        .no-results {
-            text-align: center;
-            padding: 40px;
-            color: var(--text-muted);
-            font-style: italic;
-            font-size: 1.1rem;
-        }
+        .hidden { display: none !important; }
+        .no-results { text-align: center; padding: 40px; color: var(--text-muted); font-style: italic; }
     </style>
 </head>
 <body>
 
 <div class="container">
     <header>
-        <h1>Ultimate Nitro Diag - 3.5cm³</h1>
-        <p>Base de connaissances absolue & algorithme de diagnostic de stand pour moteurs de compétition</p>
+        <h1>Encyclopédie Fusionnée Nitro 3.5cm³</h1>
+        <p>Diagnostics Usuels & Analyses Thermofluidiques Avancées pour Moteurs de Compétition</p>
     </header>
 
     <div class="quick-rules">
-        <strong>⚡ Méthodologie Pro-Line :</strong> Un diagnostic erroné provient souvent de l'accumulation de résidus. Avant tout changement de réglage critique lors d'un comportement instable, effectuez un "gorgeage/dégorgeage" (accélération brève sur le banc) pour valider le comportement réel du moteur à chaud.
+        <strong>💡 Séquence d'intervention impérative :</strong> Stabiliser la température du bloc (95°C-115°C) avant réglage. Ajuster dans l'ordre : 1. Richesse (allonge) | 2. Reprise (accélération/stabilité bas régime) | 3. Ralenti mécanique (butée d'air). Pas de pas supérieur à 1/8 de tour par essai.
     </div>
 
     <div class="filter-section">
-        <input type="text" id="searchInput" class="search-box" placeholder="Tapez un mot-clé (ex: deux temps, calage, sifflement, bulles, embrayage, météo, réservoir)...">
+        <input type="text" id="searchInput" class="search-box" placeholder="Recherche par mot-clé (ex: deux temps, calage, sifflement, bulles, cavitation, bougie, tringlerie)...">
         
-        <div class="filter-title">Filtrer par catégorie de panne :</div>
-        <div class="btn-group" id="filterGroup">
-            <button class="btn active" data-filter="all">Tous les cas ()</button>
-            <button class="btn" data-filter="ralenti2t">Ralenti en 2 temps</button>
-            <button class="btn" data-filter="prises-air">Prises d'air</button>
-            <button class="btn" data-filter="haut">Haut Régime / Pointe</button>
-            <button class="btn" data-filter="bas">Bas Régime / Reprise</button>
-            <button class="btn" data-filter="mecanique">Tringlerie & Embrayage</button>
-            <button class="btn" data-filter="improbable">Cas Improbables / Vicieux</button>
+        <div class="filter-title">Filtrer par niveau de complexité :</div>
+        <div class="btn-group" id="levelFilterGroup">
+            <button class="btn active" data-level="all">Tous les niveaux</button>
+            <button class="btn" data-level="standard">Réglages Usuels & Carburation</button>
+            <button class="btn" data-level="advanced">Phénomènes Avancés & Physique</button>
+        </div>
+
+        <div class="filter-title">Filtrer par comportement mécanique :</div>
+        <div class="btn-group" id="behaviorFilterGroup">
+            <button class="btn active" data-behavior="all">Tous les comportements</button>
+            <button class="btn" data-behavior="haut">Haut Régime / Pointe</button>
+            <button class="btn" data-behavior="bas">Bas & Mi-Régime / Reprise</button>
+            <button class="btn" data-behavior="ralenti">Ralenti & Stabilité</button>
+            <button class="btn" data-behavior="mecanique">Périphériques & Châssis</button>
         </div>
     </div>
 
     <div class="grid" id="casesGrid">
-        <!-- Rempli dynamiquement -->
-    </div>
-    <div id="noResults" class="no-results hidden">Aucun symptôme répertorié ne correspond à ces critères.</div>
+        </div>
+    <div id="noResults" class="no-results hidden">Aucun diagnostic ne correspond à vos critères de filtrage.</div>
 </div>
 
 <script>
-    const diagnosticDatabase = [
-        // ==========================================
-        // SÉRIE : LE RALENTI RETOMBE EN 2 TEMPS
-        // ==========================================
+    const masterDatabase = [
+        // ========================================================
+        // HAUT RÉGIME / POINTE
+        // ========================================================
         {
-            tags: ["ralenti2t"],
-            symptom: "Après une accélération, le ralenti reste perché très haut quelques secondes, puis chute d'un coup et cale si on remet les gaz.",
-            diag: "Reprise trop pauvre masquée par un ralenti mécanique trop bas ou trop ouvert. Le moteur tourne sur son air résiduel avant de s'étouffer.",
-            action: "<strong>Ouvrir la reprise</strong> d'1/8 de tour et <strong>visser légèrement le ralenti mécanique</strong> pour stabiliser la redescente."
+            level: "standard",
+            behavior: "haut",
+            symptom: "Le moteur coupe net à haut régime en fin de ligne droite, produit un bruit aigu ('beeeuuuh') et ne fume pas.",
+            phenomenon: "Pauvreté critique du flux de carburant à ouverture maximale du boisseau.",
+            diag: "Mélange air/carburant trop pauvre à la richesse. Risque immédiat de rupture du film hydrodynamique d'huile et de serrage piston/chemise.",
+            action: "<strong>Ouvrir la vis de Richesse</strong> immédiatement de 1/4 de tour (dévisser) pour restaurer la lubrification."
         },
         {
-            tags: ["ralenti2t"],
-            symptom: "Le ralenti reste en deux temps, mais descend uniquement lorsque la voiture s'arrête physiquement sur la piste.",
-            diag: "Ressort de masselotte d'embrayage fatigué ou cassé. La masselotte lèche la cloche et maintient le moteur en prise, simulant un ralenti haut.",
-            action: "Démonter la cloche d'embrayage et remplacer le set de ressorts de masselottes."
+            level: "standard",
+            behavior: "haut",
+            symptom: "Le moteur 'gargouille' ou régule en ligne droite, refuse d'atteindre ses tours maximaux et rejette d'importantes traînées d'huile.",
+            phenomenon: "Excès de carburant liquide limitant l'élévation de température de la chambre de combustion.",
+            diag: "Mélange trop riche à la richesse. Le volume de nitrométhane injecté sature la capacité d'auto-allumage de la bougie.",
+            action: "<strong>Fermer la Richesse</strong> par incréments de 1/8 de tour (visser) jusqu'à libérer l'allonge acoustique."
         },
         {
-            tags: ["ralenti2t", "prises-air"],
-            symptom: "Le ralenti chute en deux temps de manière totalement erratique, impossible à stabiliser malgré une reprise ouverte.",
-            diag: "Prise d'air sur le joint d'embase du carburateur ou sur le soufflet en caoutchouc du boisseau.",
-            action: "Remplacer le joint torique sous le carburateur ou changer le soufflet étanche du boisseau."
+            level: "standard",
+            behavior: "haut",
+            symptom: "Le moteur prend ses tours mais stagne en vitesse de pointe en fin de trajectoire rectiligne. La culasse dépasse 125°C.",
+            phenomenon: "Mélange légèrement sous-stœchiométrique induisant une élévation calorifique sans coupure nette.",
+            diag: "Richesse légèrement trop pauvre, opérant à la limite thermique supérieure du moteur.",
+            action: "<strong>Ouvrir la Richesse</strong> d'1/16 de tour pour abaisser la température via la chaleur latente de vaporisation du méthanol."
         },
         {
-            tags: ["ralenti2t", "mecanique"],
-            symptom: "Le ralenti descend en deux temps uniquement lorsque le servo de gaz revient doucement au neutre.",
-            diag: "Point dur mécanique ou grippage dans la tringlerie de gaz. Le boisseau met du temps à se refermer physiquement sur sa butée.",
-            action: "Vérifier l'alignement des bagues d'arrêt et nettoyer les chapes de tringlerie. Lubrifier légèrement."
+            level: "advanced",
+            behavior: "haut",
+            symptom: "Le moteur s'étouffe ou coupe en fin de ligne droite, mais la durite d'alimentation reste pleine et la culasse est tiède (<90°C).",
+            phenomenon: "Cavitation fluidique par ondes vibratoires. Les vibrations de haute fréquence du moteur font bouillir localement le méthanol dans le carburateur, générant des micro-bulles de gaz isolantes.",
+            diag: "Vapor Lock provoqué par l'émulsion du carburant sous fortes contraintes vibratoires.",
+            action: "Amortir le réservoir en remplaçant les silentblocs de fixation au châssis et isoler les durites des éléments métalliques."
         },
         {
-            tags: ["ralenti2t"],
-            symptom: "Le ralenti est parfait réservoir plein, mais passe en deux temps dès que le niveau de nitro descend sous la moitié.",
-            diag: "Vis de richesse générale un poil trop pauvre, accentuée par la baisse de pression hydrostatique du réservoir.",
-            action: "Ouvrir la vis de richesse d'1/16 de tour pour compenser la fin de réservoir."
-        },
-
-        // ==========================================
-        // SÉRIE : PRISES D'AIR
-        // ==========================================
-        {
-            tags: ["prises-air"],
-            symptom: "Présence de poussière noire collée juste derrière le volant moteur et baisse de régime inexpliquée au ralenti.",
-            diag: "Le roulement avant du vilebrequin a perdu son étanchéité. De l'air parasite entre et de l'huile s'échappe.",
-            action: "Remplacement impératif du roulement avant du moteur."
-        },
-        {
-            tags: ["prises-air", "improbable"],
-            symptom: "Le moteur devient hyper pauvre et s'emballe dès qu'il atteint sa température nominale, instable à froid.",
-            diag: "Micro-fissure invisible à froid dans le carter alu ou le bouchon de carter arrière, qui s'ouvre par dilatation thermique.",
-            action: "Démonter le bouchon arrière, vérifier l'état du joint vert/noir, appliquer de la pâte à joint haute température (RTV) au remontage."
+            level: "advanced",
+            behavior: "haut",
+            symptom: "Le moteur perd brutalement son allonge au bout de quelques minutes à pleine charge, accompagné d'une altération de la résonance acoustique.",
+            phenomenon: "Sur-accord thermique de la ligne d'échappement. La surchauffe interne des gaz élève localement la vitesse du son, modifiant le moment où l'onde de retour bloque la lumière d'échappement.",
+            diag: "Incompatibilité géométrique transitoire entre l'accord mécanique du pot et le cycle d'admission.",
+            action: "Ouvrir la Richesse de 1/16 de tour pour refroidir les gaz d'échappement via un reliquat de carburant imbrûlé."
         },
 
-        // ==========================================
-        // SÉRIE : CAS IMPROBABLES / ULTRA VICIEUX
-        // ==========================================
+        // ========================================================
+        // BAS & MI-RÉGIME / REPRISE
+        // ========================================================
         {
-            tags: ["improbable"],
-            symptom: "Le moteur coupe net en sortie de virage serré à gauche, mais fonctionne parfaitement dans les virages à droite.",
-            diag: "Phénomène de déjaugeage ou de centrifugation du plongeur de réservoir s'il est mal positionné, ou durite de carburant trop tendue qui se pince lors des mouvements du châssis.",
-            action: "Rallonger la durite d'alimentation en créant une boucle de sécurité, et inspecter le plongeur interne du réservoir."
+            level: "standard",
+            behavior: "bas",
+            symptom: "Le moteur coupe instantanément lors d'une ouverture brutale des gaz depuis le ralenti ('beeeuuuh' sec).",
+            phenomenon: "Chute de dépression transitoire appauvrissant l'admission lors de l'ouverture du boisseau.",
+            diag: "Vis de reprise beaucoup trop pauvre. Le flux d'essence ne compense pas l'apport massif et soudain d'air.",
+            action: "<strong>Ouvrir la vis de Reprise</strong> (dévisser) d'1/4 de tour."
         },
         {
-            tags: ["improbable"],
-            symptom: "Le moteur a des ratés d'allumage uniquement sur les sauts ou les grosses bosses du circuit.",
-            diag: "La languette du socket de bougie à l'intérieur de la culasse a du jeu, ou le filament de la bougie est distendu et se coupe sous l'effet des G verticaux.",
-            action: "Changer immédiatement la bougie, le filament est structurellement endommagé."
+            level: "standard",
+            behavior: "bas",
+            symptom: "À l'accélération, le moteur broute ('pote-pote'), fume excessivement, puis s'élance poussivement après plusieurs mètres.",
+            phenomenon: "Accumulation et stagnation de carburant liquide dans le carter inférieur pendant les phases stationnaires.",
+            diag: "Vis de reprise trop riche. Le carter s'engorge et le moteur doit évacuer l'excès d'huile avant de prendre ses tours.",
+            action: "<strong>Fermer la Reprise</strong> (visser) d'1/8 de tour."
         },
         {
-            tags: ["improbable"],
-            symptom: "Le carburateur refuse de répondre logiquement aux réglages de reprise. Visser ou dévisser ne change presque rien.",
-            diag: "Usure micrométrique du corps de carburateur en plastique/alu. Le boisseau a pris du jeu radial et l'air passe tout autour du boisseau au lieu de passer par le venturi.",
-            action: "Remplacer le corps du carburateur complet."
-        },
-        {
-            tags: ["improbable", "haut"],
-            symptom: "Le moteur s'étouffe en fin de ligne droite, mais la durite est pleine et la température est basse (90°C).",
-            diag: "Phénomène de cavitation : les vibrations extrêmes du moteur font bouillir le carburant dans la durite ou le carburateur, créant des micro-bulles de gaz de nitro.",
-            action: "Isoler le réservoir en remplaçant les joints silicone de montage du réservoir (silentblocs trop rigides)."
-        },
-        {
-            tags: ["improbable"],
-            symptom: "Le moteur perd toute sa puissance après 5 minutes de roulage, calages fréquents, mais redevient parfait après refroidissement.",
-            diag: "Carburant dégradé par une exposition directe aux rayons UV du soleil sur la table de stand, altérant le pourcentage de nitrométhane.",
-            action: "Jeter le carburant du réservoir, utiliser un bidon opaque conservé à l'ombre."
-        },
-        {
-            tags: ["improbable", "mecanique"],
-            symptom: "Le moteur tourne parfaitement sur le banc, mais s'éteint instantanément dès que la voiture est posée au sol sans accélérer.",
-            diag: "La cloche d'embrayage est trop serrée longitudinalement (pas de jeu axial). En posant la voiture, les roues bloquent la transmission qui bloque directement le vilebrequin.",
-            action: "Ajouter ou retirer des rondelles de calage d'embrayage pour obtenir un jeu axial d'environ 0.1 à 0.2 mm."
-        },
-        {
-            tags: ["improbable"],
-            symptom: "Sifflement strident permanent aigu en pointe, perte de pointe, mais réglages de richesse parfaits.",
-            diag: "Fuite de compression au niveau du raccord d'échappement (joint de coude d'échappement déchiré ou ressorts détendus).",
-            action: "Remplacer le joint silicone d'échappement et doubler les ressorts de maintien du résonateur."
+            level: "advanced",
+            behavior: "bas",
+            symptom: "Le moteur s'effondre ou cale lors des ré-ouvertures de gaz faisant suite à un freinage violent en bout de ligne droite.",
+            phenomenon: "Effet bélier inversé. L'arrêt brutal du flux d'air à la fermeture rapide du boisseau pousse le carburant, plus dense, à continuer sa trajectoire par inertie, saturant le puits d'aiguille.",
+            diag: "Gorgement fluidique par surpression d'inertie dans le circuit de bas régime.",
+            action: "Fermer subtilement la reprise d'1/16 de tour et ajuster la tringlerie pour lisser la vitesse de fermeture du boisseau."
         },
 
-        // ==========================================
-        // AJOUTS STANDARDS / COMPLÉMENTS PERFS
-        // ==========================================
+        // ========================================================
+        // RALENTI & STABILITÉ (INCLUANT LE RALENTI EN 2 TEMPS)
+        // ========================================================
         {
-            tags: ["haut"],
-            symptom: "Le moteur régule à haut régime, fume modérément mais refuse d'atteindre sa vitesse de pointe maximale.",
-            diag: "Bougie trop froide pour la température ambiante extérieure actuelle.",
-            action: "Passer sur un indice de bougie plus chaud (ex: passer d'une P5 à une P4)."
+            level: "standard",
+            behavior: "ralenti",
+            symptom: "Le ralenti est stable quelques secondes après un run, puis chute progressivement jusqu'au calage en crachant du gras.",
+            phenomenon: "Refroidissement continu du carter par sur-alimentation en carburant à l'arrêt.",
+            diag: "Vis de reprise trop riche combinée à un ralenti mécanique compensatoire trop ouvert. Le carter s'inonde lentement au neutre.",
+            action: "<strong>Fermer la Reprise</strong> d'1/8 de tour et <strong>dévisser le ralenti mécanique</strong> pour redescendre la butée d'air."
         },
         {
-            tags: ["bas"],
-            symptom: "Le moteur s'effondre totalement en reprise après une longue descente au ralenti sans toucher aux gaz.",
-            diag: "Le carter s'est refroidi excessivement. La reprise est légèrement trop riche pour endurer de longues phases statiques.",
-            action: "Fermer la reprise d'1/16 de tour et maintenir de légers coups de gaz d'entretien."
+            level: "standard",
+            behavior: "ralenti",
+            symptom: "Après une accélération, le ralenti reste perché très haut pendant 3 à 5 secondes avant de chuter brutalement à sa valeur normale.",
+            phenomenon: "Cycle d'aspiration déficitaire en carburant. Le moteur consomme l'air résiduel avant que le circuit de reprise n'injecte assez d'essence pour stabiliser le régime.",
+            diag: "Déséquilibre classique : Vis de reprise trop fermée (pauvre) associée à une vis de ralenti mécanique trop basse.",
+            action: "<strong>Ouvrir la vis de Reprise</strong> d'1/8 de tour, puis <strong>visser le ralenti mécanique</strong> pour stabiliser le palier bas."
+        },
+        {
+            level: "advanced",
+            behavior: "ralenti",
+            symptom: "Le ralenti retombe en deux temps de manière totalement erratique et aléatoire, insensible aux ajustements de la vis de reprise.",
+            phenomenon: "Aspiration parasite non mesurée en aval du venturi du carburateur.",
+            diag: "Prise d'air structurelle. Le joint torique d'embase du carburateur est fendu, ou le soufflet en caoutchouc du boisseau est micro-percé.",
+            action: "Remplacer le joint torique d'embase du carburateur et inspecter l'étanchéité périphérique du soufflet de boisseau."
+        },
+        {
+            level: "advanced",
+            behavior: "ralenti",
+            symptom: "Le ralenti reste haut à l'arrêt sur la piste et ne rechute à sa valeur normale que lorsque la voiture est immobilisée manuellement.",
+            phenomenon: "Friction mécanique transmettant l'énergie résiduelle de la transmission au vilebrequin.",
+            diag: "Ressort d'embrayage détendu ou masselotte endommagée. L'embrayage reste en prise partielle et maintient artificiellement le régime moteur.",
+            action: "Démonter la cloche d'embrayage, contrôler la tension des ressorts et remplacer l'ensemble si usure asymétrique."
+        },
+        {
+            level: "advanced",
+            behavior: "ralenti",
+            symptom: "Le moteur cale instantanément après un retour au stand statique de plus de 10 secondes, mais redémarre immédiatement.",
+            phenomenon: "Heat Soak (conduction calorifique inversée). L'absence de flux d'air frais dans le venturi fait monter la température du carburateur par contact avec le carter. Le carburant entre en ébullition avant le gicleur.",
+            diag: "Vaporisation précoce du carburant dans le corps du carburateur (poches de gaz isolantes).",
+            action: "Remplacer ou repositionner la bague d'isolation thermique en résine phénolique entre le carburateur et le carter en alu."
+        },
+
+        // ========================================================
+        // MÉCANIQUE / CHÂSSIS / PERIPHÉRIQUES
+        // ========================================================
+        {
+            level: "standard",
+            behavior: "mecanique",
+            symptom: "Le moteur cale systématiquement dès que l'opérateur applique une commande de freinage ferme sur la radiocommande.",
+            phenomenon: "Fermeture physique totale du passage d'air par écrasement de la butée.",
+            diag: "Tringlerie mal réglée forçant sur le boisseau en l'absence de garde mécanique. La vis de ralenti mécanique n'assure plus son rôle de butée.",
+            action: "Ajuster les bagues de tringlerie pour laisser un jeu fonctionnel de 1 mm au boisseau sous contrainte de freinage, puis visser le ralenti mécanique."
+        },
+        {
+            level: "standard",
+            behavior: "mecanique",
+            symptom: "Le moteur coupe net lors de la réception d'un saut ou du passage sur une succession de bosses prononcées.",
+            phenomenon: "Rupture de la phase d'incandescence du catalyseur sous contrainte mécanique verticale.",
+            diag: "Filament de la bougie distendu ou affaissé. Le choc déforme le filament et brise instantanément le cycle d'auto-allumage.",
+            action: "<strong>Changer la bougie</strong> par une neuve (Ultimate P4 / OS P4). Sa résistance structurelle interne est compromise."
+        },
+        {
+            level: "advanced",
+            behavior: "mecanique",
+            symptom: "Le moteur fonctionne parfaitement sur le banc de démarrage mais cale instantanément dès que les roues touchent le sol au neutre.",
+            phenomenon: "Verrouillage cinématique direct de l'équipage mobile.",
+            diag: "Jeu axial insuffisant ou nul de la cloche d'embrayage. La mise en charge du châssis contraint la cloche contre le vilebrequin, bloquant le moteur.",
+            action: "Ajouter ou retirer des rondelles de calage pour restituer un jeu axial libre compris entre 0.1 mm et 0.2 mm sur la cloche."
+        },
+        {
+            level: "advanced",
+            behavior: "mecanique",
+            symptom: "Le moteur appauvrit sa carburation et surchauffe uniquement lorsque le niveau du réservoir descend sous la moitié.",
+            phenomenon: "Chute de la pression hydrostatique interne non compensée par la pressurisation du résonateur.",
+            diag: "Micro-fuite de pressurisation (durite poreuse, joint de bouchon de réservoir usé) réduisant le refoulement de carburant en fin de réservoir.",
+            action: "Remplacer la durite reliant le résonateur au réservoir et contrôler l'étanchéité du joint d'étanchéité du bouchon."
         }
     ];
 
     const casesGrid = document.getElementById('casesGrid');
     const searchInput = document.getElementById('searchInput');
-    const filterGroup = document.getElementById('filterGroup');
+    const levelFilterGroup = document.getElementById('levelFilterGroup');
+    const behaviorFilterGroup = document.getElementById('behaviorFilterGroup');
     const noResults = document.getElementById('noResults');
 
-    let currentFilter = 'all';
+    let currentLevel = 'all';
+    let currentBehavior = 'all';
     let currentSearch = '';
 
     function renderCards() {
         casesGrid.innerHTML = '';
         let visibleCount = 0;
 
-        diagnosticDatabase.forEach(item => {
-            const matchesFilter = currentFilter === 'all' || item.tags.includes(currentFilter);
-            const searchText = (item.symptom + ' ' + item.diag + ' ' + item.action).toLowerCase();
+        masterDatabase.forEach(item => {
+            const matchesLevel = currentLevel === 'all' || item.level === currentLevel;
+            const matchesBehavior = currentBehavior === 'all' || item.behavior === currentBehavior;
+            
+            const searchText = (item.symptom + ' ' + item.phenomenon + ' ' + item.diag + ' ' + item.action).toLowerCase();
             const matchesSearch = searchText.includes(currentSearch.toLowerCase());
 
-            if (matchesFilter && matchesSearch) {
+            if (matchesLevel && matchesBehavior && matchesSearch) {
                 visibleCount++;
                 const card = document.createElement('div');
                 card.className = 'card';
                 
-                const primaryTag = item.tags[0];
-                let badgeLabel = primaryTag;
-                if(primaryTag === 'haut') badgeLabel = 'Pointe';
-                if(primaryTag === 'bas') badgeLabel = 'Reprise';
-                if(primaryTag === 'ralenti2t') badgeLabel = 'Ralenti 2T';
-                if(primaryTag === 'prises-air') badgeLabel = 'Prise d\'air';
-                if(primaryTag === 'mecanique') badgeLabel = 'Mécanique';
-                if(primaryTag === 'improbable') badgeLabel = 'Ultra Vicieux ⚠️';
+                const levelBadge = item.level === 'standard' ? 'Usuel / Carburation' : 'Physique / Avancé';
 
                 card.innerHTML = `
                     <div>
                         <div class="card-header">
                             <span class="symptom-title">🔍 ${item.symptom}</span>
-                            <span class="badge badge-${primaryTag}">${badgeLabel}</span>
+                            <span class="badge badge-${item.level}">${levelBadge}</span>
                         </div>
                         <div class="section-block">
-                            <div class="section-title">Analyse du problème :</div>
+                            <div class="section-title">Phénomène Physique Sous-Jacent :</div>
+                            <div class="phenomenon-text">${item.phenomenon}</div>
+                        </div>
+                        <div class="section-block">
+                            <div class="section-title">Analyse & Diagnostic :</div>
                             <div class="diagnosis-text">${item.diag}</div>
                         </div>
                     </div>
                     <div class="action-box">
-                        <strong>🛠️ Résolution :</strong> ${item.action}
+                        <strong>🛠️ Action Corrective :</strong> ${item.action}
                     </div>
                 `;
                 casesGrid.appendChild(card);
             }
         });
 
-        // Mise à jour dynamique du compteur sur le bouton "Tous les cas"
-        const allBtn = document.querySelector('[data-filter="all"]');
+        // Gestion du bouton de réinitialisation/compteur global
+        const allBtn = document.querySelector('[data-level="all"]');
         if(allBtn && currentSearch === '') {
-            allBtn.textContent = `Tous les cas (${diagnosticDatabase.length})`;
+            allBtn.textContent = `Tous les niveaux (${masterDatabase.length})`;
         }
 
         if (visibleCount === 0) {
@@ -447,11 +482,21 @@
         }
     }
 
-    filterGroup.addEventListener('click', (e) => {
+    // Handlers
+    levelFilterGroup.addEventListener('click', (e) => {
         if (e.target.classList.contains('btn')) {
-            document.querySelectorAll('#filterGroup .btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('#levelFilterGroup .btn').forEach(btn => btn.classList.remove('active'));
             e.target.classList.add('active');
-            currentFilter = e.target.getAttribute('data-filter');
+            currentLevel = e.target.getAttribute('data-level');
+            renderCards();
+        }
+    });
+
+    behaviorFilterGroup.addEventListener('click', (e) => {
+        if (e.target.classList.contains('btn')) {
+            document.querySelectorAll('#behaviorFilterGroup .btn').forEach(btn => btn.classList.remove('active'));
+            e.target.classList.add('active');
+            currentBehavior = e.target.getAttribute('data-behavior');
             renderCards();
         }
     });
@@ -461,7 +506,7 @@
         renderCards();
     });
 
-    // Init
+    // Initialisation globale
     renderCards();
 </script>
 </body>
