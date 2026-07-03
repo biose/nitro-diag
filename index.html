@@ -1,513 +1,1047 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="fr" class="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ultimate Nitro Bible - Master Diag 3.5cm³</title>
+    <title>Nitro.21 - Expert Engine Tuning & Diagnostic Studio</title>
     <style>
         :root {
-            --bg-color: #060913;
-            --card-bg: #0f1626;
-            --text-main: #f8fafc;
-            --text-muted: #64748b;
-            --accent: #ff5500;
-            --accent-hover: #dd4400;
-            --border: #1e293b;
-            --success: #10b981;
+            --bg-main: #09090b;
+            --bg-card: #18181b;
+            --bg-muted: #27272a;
+            --border: #3f3f46;
+            --text-main: #f4f4f5;
+            --text-muted: #a1a1aa;
+            --accent: #f97316;
+            --accent-hover: #ea580c;
+            --success: #22c55e;
+            --warning: #eab308;
             --danger: #ef4444;
-            --warning: #f59e0b;
-            --purple: #8b5cf6;
-            --blue: #3b82f6;
+            --font: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
         }
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+        @media print {
+            body { background: #fff !important; color: #000 !important; font-size: 11pt; }
+            .no-print { display: none !important; }
+            .print-only { display: block !important; }
+            .card { border: 1px solid #ccc !important; box-shadow: none !important; background: #fff !important; page-break-inside: avoid; color: #000 !important; }
+            .text-muted { color: #555 !important; }
+            .text-accent { color: #000 !important; font-weight: bold; }
         }
 
-        body {
-            background-color: var(--bg-color);
-            color: var(--text-main);
-            padding: 15px;
-            line-height: 1.5;
-        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: var(--font); }
+        body { background-color: var(--bg-main); color: var(--text-main); line-height: 1.5; overflow-x: hidden; -webkit-font-smoothing: antialiased; }
+        
+        header { display: flex; align-items: center; justify-content: space-between; padding: 1rem 2rem; border-bottom: 1px solid var(--border); background: rgba(24, 24, 27, 0.8); backdrop-filter: blur(8px); position: sticky; top: 0; z-index: 50; }
+        .logo { display: flex; align-items: center; gap: 0.5rem; font-weight: 800; font-size: 1.25rem; color: var(--text-main); text-transform: uppercase; letter-spacing: 0.05em; }
+        .logo span { color: var(--accent); }
+        
+        nav { display: flex; gap: 0.5rem; overflow-x: auto; padding: 0.5rem 2rem; background: #121214; border-bottom: 1px solid var(--border); scrollbar-width: none; }
+        nav::-webkit-scrollbar { display: none; }
+        nav button { background: transparent; border: none; color: var(--text-muted); padding: 0.5rem 1rem; font-size: 0.875rem; font-weight: 500; cursor: pointer; border-radius: 6px; transition: all 0.2s; white-space: nowrap; }
+        nav button:hover { color: var(--text-main); background: var(--bg-muted); }
+        nav button.active { color: var(--text-main); background: var(--border); box-shadow: 0 1px 3px rgba(0,0,0,0.2); }
 
-        .container {
-            max-width: 1600px;
-            margin: 0 auto;
-        }
+        .app-container { max-width: 1400px; margin: 2rem auto; padding: 0 2rem; }
+        .view-section { display: none; }
+        .view-section.active { display: block; animation: fadeIn 0.3s ease-in-out; }
+        
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
 
-        header {
-            text-align: center;
-            margin-bottom: 25px;
-            padding: 30px 20px;
-            border-bottom: 2px solid var(--border);
-            background: linear-gradient(to bottom, #0f1626, var(--bg-color));
-            border-radius: 12px;
-        }
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+        @media (max-width: 900px) { .grid-2 { grid-template-columns: 1fr; } }
+        .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1.5rem; }
+        @media (max-width: 1024px) { .grid-3 { grid-template-columns: 1fr; } }
 
-        header h1 {
-            color: var(--accent);
-            font-size: 2.5rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            font-weight: 900;
-        }
+        .card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; padding: 1.5rem; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); position: relative; }
+        .card-title { font-size: 1.1rem; font-weight: 600; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem; border-bottom: 1px solid var(--border); padding-bottom: 0.5rem; }
+        
+        .btn { background: var(--bg-muted); border: 1px solid var(--border); color: var(--text-main); padding: 0.6rem 1.2rem; border-radius: 6px; cursor: pointer; font-weight: 500; transition: all 0.2s; display: inline-flex; align-items: center; gap: 0.5rem; font-size: 0.9rem; }
+        .btn:hover { background: var(--border); border-color: var(--text-muted); }
+        .btn-primary { background: var(--accent); border-color: var(--accent); color: white; }
+        .btn-primary:hover { background: var(--accent-hover); border-color: var(--accent-hover); }
+        .btn-danger { background: rgba(239, 68, 68, 0.1); border-color: var(--danger); color: var(--danger); }
+        .btn-danger:hover { background: var(--danger); color: white; }
+        .btn-sm { padding: 0.35rem 0.75rem; font-size: 0.8rem; border-radius: 4px; }
 
-        header p {
-            color: var(--text-muted);
-            margin-top: 8px;
-            font-size: 1.1rem;
-        }
+        .form-group { margin-bottom: 1rem; }
+        .form-group label { display: block; font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.4rem; font-weight: 500; }
+        .form-control { width: 100%; background: var(--bg-main); border: 1px solid var(--border); border-radius: 6px; padding: 0.6rem; color: var(--text-main); font-size: 0.9rem; transition: border-color 0.2s; }
+        .form-control:focus { outline: none; border-color: var(--accent); }
 
-        .quick-rules {
-            background: rgba(255, 85, 0, 0.05);
-            border-left: 4px solid var(--accent);
-            padding: 15px;
-            border-radius: 6px;
-            margin-bottom: 25px;
-            font-size: 0.95rem;
-        }
+        .badge { display: inline-flex; align-items: center; padding: 0.2rem 0.5rem; border-radius: 4px; font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.02em; }
+        .badge-danger { background: rgba(239, 68, 68, 0.15); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.3); }
+        .badge-warning { background: rgba(234, 179, 8, 0.15); color: #facc15; border: 1px solid rgba(234, 179, 8, 0.3); }
+        .badge-success { background: rgba(34, 197, 94, 0.15); color: #4ade80; border: 1px solid rgba(34, 197, 94, 0.3); }
+        .badge-info { background: rgba(59, 130, 246, 0.15); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.3); }
 
-        .filter-section {
-            background-color: var(--card-bg);
-            padding: 20px;
-            border-radius: 10px;
-            margin-bottom: 25px;
-            border: 1px solid var(--border);
-            box-shadow: 0 8px 20px rgba(0,0,0,0.4);
-        }
+        .symptom-btn { background: var(--bg-main); border: 1px solid var(--border); text-align: left; padding: 0.75rem; border-radius: 8px; cursor: pointer; transition: all 0.15s; font-size: 0.85rem; display: flex; justify-content: space-between; align-items: center; }
+        .symptom-btn:hover { border-color: var(--text-muted); background: var(--bg-muted); }
 
-        .search-box {
-            width: 100%;
-            padding: 15px;
-            background-color: var(--bg-color);
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            color: var(--text-main);
-            margin-bottom: 20px;
-            font-size: 1rem;
-        }
+        .diag-response-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 0.5rem; margin-top: 1rem; }
+        .response-btn { background: var(--bg-main); border: 1px solid var(--border); padding: 0.6rem; border-radius: 6px; font-size: 0.8rem; cursor: pointer; color: var(--text-main); transition: all 0.15s; text-align: center; font-weight: 500; }
+        .response-btn:hover { border-color: var(--accent); background: rgba(249, 115, 22, 0.05); }
 
-        .search-box:focus {
-            outline: none;
-            border-color: var(--accent);
-        }
+        .progress-bar-container { background: var(--bg-main); border-radius: 999px; height: 8px; width: 100%; overflow: hidden; margin: 1rem 0; border: 1px solid var(--border); }
+        .progress-bar-fill { background: var(--accent); height: 100%; width: 0%; transition: width 0.3s ease; }
 
-        .filter-title {
-            font-size: 0.9rem;
-            margin-bottom: 12px;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            color: var(--accent);
-        }
+        .cause-list-item { display: flex; justify-content: space-between; align-items: center; padding: 0.85rem; border-bottom: 1px solid var(--border); cursor: pointer; transition: background 0.2s; border-radius: 6px; }
+        .cause-list-item:hover { background: var(--bg-muted); }
+        .cause-list-item:last-child { border-bottom: none; }
 
-        .btn-group {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-            margin-bottom: 15px;
-        }
+        .tech-fiche { display: none; margin-top: 1.5rem; animation: fadeIn 0.4s ease; border-left: 4px solid var(--accent); }
+        .tech-fiche.active { display: block; }
+        .fiche-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1.5rem; border-bottom: 1px solid var(--border); padding-bottom: 1rem; }
 
-        .btn {
-            background-color: var(--bg-color);
-            color: var(--text-main);
-            border: 1px solid var(--border);
-            padding: 8px 16px;
-            border-radius: 6px;
-            cursor: pointer;
-            transition: all 0.2s;
-            font-size: 0.85rem;
-            font-weight: 600;
-        }
+        .table-container { width: 100%; overflow-x: auto; margin: 1rem 0; border: 1px solid var(--border); border-radius: 8px; }
+        table { width: 100%; border-collapse: collapse; text-align: left; font-size: 0.875rem; }
+        th { background: var(--bg-muted); padding: 0.75rem; font-weight: 600; border-bottom: 1px solid var(--border); color: var(--text-muted); }
+        td { padding: 0.75rem; border-bottom: 1px solid var(--border); }
+        tr:last-child td { border-bottom: none; }
+        tr:hover td { background: rgba(255,255,255,0.02); }
 
-        .btn:hover, .btn.active {
-            border-color: var(--accent);
-            background-color: var(--accent);
-            color: white;
-        }
+        .flex-center { display: flex; align-items: center; gap: 0.5rem; }
+        .space-y { display: flex; flex-direction: column; gap: 1rem; }
+        .text-accent { color: var(--accent); }
+        .text-xl { font-size: 1.5rem; font-weight: 700; }
+        .text-sm { font-size: 0.85rem; color: var(--text-muted); }
 
-        .grid {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 20px;
-        }
+        .search-wrapper { position: relative; width: 100%; margin-bottom: 1.5rem; }
+        .search-icon { position: absolute; left: 1rem; top: 50%; transform: translateY(-50%); color: var(--text-muted); pointer-events: none; }
+        .search-control { width: 100%; background: var(--bg-card); border: 1px solid var(--border); border-radius: 999px; padding: 0.8rem 1rem 0.8rem 2.8rem; color: var(--text-main); font-size: 1rem; transition: all 0.2s; }
+        .search-control:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 2px rgba(249, 115, 22, 0.2); }
 
-        @media (min-width: 768px) { .grid { grid-template-columns: repeat(2, 1fr); } }
-        @media (min-width: 1200px) { .grid { grid-template-columns: repeat(3, 1fr); } }
+        .history-item { display: flex; justify-content: space-between; align-items: center; padding: 0.75rem; background: var(--bg-main); border: 1px solid var(--border); border-radius: 6px; margin-bottom: 0.5rem; }
+        .canvas-container { display: flex; justify-content: center; align-items: center; margin: 1rem 0; background: var(--bg-main); border-radius: 8px; padding: 1rem; border: 1px solid var(--border); width: 100%; }
+        canvas { max-width: 100%; height: auto; }
 
-        .card {
-            background-color: var(--card-bg);
-            border: 1px solid var(--border);
-            border-radius: 10px;
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-        }
+        .glossary-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1rem; }
+        .glossary-card { background: var(--bg-card); border: 1px solid var(--border); padding: 1.25rem; border-radius: 8px; }
+        .glossary-term { font-weight: 700; color: var(--accent); margin-bottom: 0.35rem; font-size: 1rem; }
 
-        .card-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: 15px;
-            gap: 15px;
-        }
+        .toggle-container { display: flex; background: var(--bg-main); border: 1px solid var(--border); padding: 0.25rem; border-radius: 8px; gap: 0.25rem; }
+        .toggle-btn { flex: 1; background: transparent; border: none; color: var(--text-muted); padding: 0.4rem 0.8rem; font-size: 0.8rem; font-weight: 600; border-radius: 6px; cursor: pointer; transition: all 0.15s; white-space: nowrap; }
+        .toggle-btn.active { background: var(--border); color: var(--text-main); }
 
-        .symptom-title {
-            font-size: 1.1rem;
-            font-weight: 700;
-            color: #ffffff;
-            line-height: 1.4;
-        }
-
-        .badge {
-            font-size: 0.65rem;
-            padding: 4px 8px;
-            border-radius: 4px;
-            font-weight: 800;
-            text-transform: uppercase;
-            white-space: nowrap;
-            letter-spacing: 0.5px;
-        }
-
-        .badge-standard { background: rgba(59, 130, 246, 0.15); color: var(--blue); border: 1px solid var(--blue); }
-        .badge-advanced { background: rgba(139, 92, 246, 0.15); color: var(--purple); border: 1px solid var(--purple); }
-
-        .section-block {
-            margin-top: 10px;
-            padding-top: 10px;
-            border-top: 1px solid rgba(255,255,255,0.05);
-        }
-
-        .section-title {
-            font-size: 0.75rem;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            color: var(--text-muted);
-            margin-bottom: 4px;
-            font-weight: 700;
-        }
-
-        .phenomenon-text {
-            color: #94a3b8;
-            font-size: 0.88rem;
-            font-style: italic;
-            background: rgba(0,0,0,0.2);
-            padding: 8px;
-            border-radius: 4px;
-            margin-bottom: 6px;
-        }
-
-        .diagnosis-text {
-            color: #cbd5e1;
-            font-size: 0.92rem;
-        }
-
-        .action-box {
-            background-color: rgba(16, 185, 129, 0.05);
-            border: 1px dashed rgba(16, 185, 129, 0.3);
-            border-radius: 6px;
-            padding: 12px;
-            margin-top: 15px;
-            color: #ecfdf5;
-            font-size: 0.92rem;
-        }
-
-        .action-box strong {
-            color: var(--success);
-        }
-
-        .hidden { display: none !important; }
-        .no-results { text-align: center; padding: 40px; color: var(--text-muted); font-style: italic; }
+        blockquote { border-left: 3px solid var(--accent); padding-left: 0.85rem; color: var(--text-muted); font-style: italic; font-size: 0.9rem; }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <header>
-        <h1>Encyclopédie Fusionnée Nitro 3.5cm³</h1>
-        <p>Diagnostics Usuels & Analyses Thermofluidiques Avancées pour Moteurs de Compétition</p>
+    <header class="no-print">
+        <div class="logo">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 0-7.94-7.94L9.66 1.4a1 1 0 0 0 0 1.41l1.6 1.6a1 1 0 0 0 1.4 0l1.61-1.62a3.5 3.5 0 0 1 4.95 4.95L14.7 6.3z"/><path d="M5.5 10.5L2 14v6l4 2h6l3.5-3.5L5.5 10.5z"/></svg>
+            <span>Nitro.21</span> Studio & Diagnostics
+        </div>
+        <div class="flex-center">
+            <div class="toggle-container" id="levelToggle">
+                <button class="toggle-btn active" data-level="expert">Mode Expert</button>
+                <button class="toggle-btn" data-level="beginner">Débutant</button>
+            </div>
+            <button class="btn btn-sm" id="fullscreenBtn" title="Plein écran">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg>
+            </button>
+        </div>
     </header>
 
-    <div class="quick-rules">
-        <strong>💡 Séquence d'intervention impérative :</strong> Stabiliser la température du bloc (95°C-115°C) avant réglage. Ajuster dans l'ordre : 1. Richesse (allonge) | 2. Reprise (accélération/stabilité bas régime) | 3. Ralenti mécanique (butée d'air). Pas de pas supérieur à 1/8 de tour par essai.
-    </div>
+    <nav class="no-print" id="mainNav">
+        <button class="active" data-view="diagnostic">Moteur Clinique d'Inférence</button>
+        <button data-view="assistant">Assistant Carburation Piste</button>
+        <button data-view="tables">Données & Matrices de Référence</button>
+        <button data-view="tools">Calculateurs d'Atelier</button>
+        <button data-view="glossary">Glossaire & Lexique Modélisme</button>
+        <button data-view="history">Historique & LocalStorage</button>
+    </nav>
 
-    <div class="filter-section">
-        <input type="text" id="searchInput" class="search-box" placeholder="Recherche par mot-clé (ex: deux temps, calage, sifflement, bulles, cavitation, bougie, tringlerie)...">
-        
-        <div class="filter-title">Filtrer par niveau de complexité :</div>
-        <div class="btn-group" id="levelFilterGroup">
-            <button class="btn active" data-level="all">Tous les niveaux</button>
-            <button class="btn" data-level="standard">Réglages Usuels & Carburation</button>
-            <button class="btn" data-level="advanced">Phénomènes Avancés & Physique</button>
-        </div>
+    <main class="app-container">
 
-        <div class="filter-title">Filtrer par comportement mécanique :</div>
-        <div class="btn-group" id="behaviorFilterGroup">
-            <button class="btn active" data-behavior="all">Tous les comportements</button>
-            <button class="btn" data-behavior="haut">Haut Régime / Pointe</button>
-            <button class="btn" data-behavior="bas">Bas & Mi-Régime / Reprise</button>
-            <button class="btn" data-behavior="ralenti">Ralenti & Stabilité</button>
-            <button class="btn" data-behavior="mecanique">Périphériques & Châssis</button>
-        </div>
-    </div>
+        <section id="diagnosticView" class="view-section active">
+            <div class="search-wrapper no-print">
+                <span class="search-icon"><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg></span>
+                <input type="text" class="search-control" id="searchSymptom" placeholder="Recherche immédiate d'un symptôme clinique (ex: cale à chaud, ratatouille, reprise, ralenti instable)...">
+            </div>
 
-    <div class="grid" id="casesGrid">
-        </div>
-    <div id="noResults" class="no-results hidden">Aucun diagnostic ne correspond à vos critères de filtrage.</div>
-</div>
-
-<script>
-    const masterDatabase = [
-        // ========================================================
-        // HAUT RÉGIME / POINTE
-        // ========================================================
-        {
-            level: "standard",
-            behavior: "haut",
-            symptom: "Le moteur coupe net à haut régime en fin de ligne droite, produit un bruit aigu ('beeeuuuh') et ne fume pas.",
-            phenomenon: "Pauvreté critique du flux de carburant à ouverture maximale du boisseau.",
-            diag: "Mélange air/carburant trop pauvre à la richesse. Risque immédiat de rupture du film hydrodynamique d'huile et de serrage piston/chemise.",
-            action: "<strong>Ouvrir la vis de Richesse</strong> immédiatement de 1/4 de tour (dévisser) pour restaurer la lubrification."
-        },
-        {
-            level: "standard",
-            behavior: "haut",
-            symptom: "Le moteur 'gargouille' ou régule en ligne droite, refuse d'atteindre ses tours maximaux et rejette d'importantes traînées d'huile.",
-            phenomenon: "Excès de carburant liquide limitant l'élévation de température de la chambre de combustion.",
-            diag: "Mélange trop riche à la richesse. Le volume de nitrométhane injecté sature la capacité d'auto-allumage de la bougie.",
-            action: "<strong>Fermer la Richesse</strong> par incréments de 1/8 de tour (visser) jusqu'à libérer l'allonge acoustique."
-        },
-        {
-            level: "standard",
-            behavior: "haut",
-            symptom: "Le moteur prend ses tours mais stagne en vitesse de pointe en fin de trajectoire rectiligne. La culasse dépasse 125°C.",
-            phenomenon: "Mélange légèrement sous-stœchiométrique induisant une élévation calorifique sans coupure nette.",
-            diag: "Richesse légèrement trop pauvre, opérant à la limite thermique supérieure du moteur.",
-            action: "<strong>Ouvrir la Richesse</strong> d'1/16 de tour pour abaisser la température via la chaleur latente de vaporisation du méthanol."
-        },
-        {
-            level: "advanced",
-            behavior: "haut",
-            symptom: "Le moteur s'étouffe ou coupe en fin de ligne droite, mais la durite d'alimentation reste pleine et la culasse est tiède (<90°C).",
-            phenomenon: "Cavitation fluidique par ondes vibratoires. Les vibrations de haute fréquence du moteur font bouillir localement le méthanol dans le carburateur, générant des micro-bulles de gaz isolantes.",
-            diag: "Vapor Lock provoqué par l'émulsion du carburant sous fortes contraintes vibratoires.",
-            action: "Amortir le réservoir en remplaçant les silentblocs de fixation au châssis et isoler les durites des éléments métalliques."
-        },
-        {
-            level: "advanced",
-            behavior: "haut",
-            symptom: "Le moteur perd brutalement son allonge au bout de quelques minutes à pleine charge, accompagné d'une altération de la résonance acoustique.",
-            phenomenon: "Sur-accord thermique de la ligne d'échappement. La surchauffe interne des gaz élève localement la vitesse du son, modifiant le moment où l'onde de retour bloque la lumière d'échappement.",
-            diag: "Incompatibilité géométrique transitoire entre l'accord mécanique du pot et le cycle d'admission.",
-            action: "Ouvrir la Richesse de 1/16 de tour pour refroidir les gaz d'échappement via un reliquat de carburant imbrûlé."
-        },
-
-        // ========================================================
-        // BAS & MI-RÉGIME / REPRISE
-        // ========================================================
-        {
-            level: "standard",
-            behavior: "bas",
-            symptom: "Le moteur coupe instantanément lors d'une ouverture brutale des gaz depuis le ralenti ('beeeuuuh' sec).",
-            phenomenon: "Chute de dépression transitoire appauvrissant l'admission lors de l'ouverture du boisseau.",
-            diag: "Vis de reprise beaucoup trop pauvre. Le flux d'essence ne compense pas l'apport massif et soudain d'air.",
-            action: "<strong>Ouvrir la vis de Reprise</strong> (dévisser) d'1/4 de tour."
-        },
-        {
-            level: "standard",
-            behavior: "bas",
-            symptom: "À l'accélération, le moteur broute ('pote-pote'), fume excessivement, puis s'élance poussivement après plusieurs mètres.",
-            phenomenon: "Accumulation et stagnation de carburant liquide dans le carter inférieur pendant les phases stationnaires.",
-            diag: "Vis de reprise trop riche. Le carter s'engorge et le moteur doit évacuer l'excès d'huile avant de prendre ses tours.",
-            action: "<strong>Fermer la Reprise</strong> (visser) d'1/8 de tour."
-        },
-        {
-            level: "advanced",
-            behavior: "bas",
-            symptom: "Le moteur s'effondre ou cale lors des ré-ouvertures de gaz faisant suite à un freinage violent en bout de ligne droite.",
-            phenomenon: "Effet bélier inversé. L'arrêt brutal du flux d'air à la fermeture rapide du boisseau pousse le carburant, plus dense, à continuer sa trajectoire par inertie, saturant le puits d'aiguille.",
-            diag: "Gorgement fluidique par surpression d'inertie dans le circuit de bas régime.",
-            action: "Fermer subtilement la reprise d'1/16 de tour et ajuster la tringlerie pour lisser la vitesse de fermeture du boisseau."
-        },
-
-        // ========================================================
-        // RALENTI & STABILITÉ (INCLUANT LE RALENTI EN 2 TEMPS)
-        // ========================================================
-        {
-            level: "standard",
-            behavior: "ralenti",
-            symptom: "Le ralenti est stable quelques secondes après un run, puis chute progressivement jusqu'au calage en crachant du gras.",
-            phenomenon: "Refroidissement continu du carter par sur-alimentation en carburant à l'arrêt.",
-            diag: "Vis de reprise trop riche combinée à un ralenti mécanique compensatoire trop ouvert. Le carter s'inonde lentement au neutre.",
-            action: "<strong>Fermer la Reprise</strong> d'1/8 de tour et <strong>dévisser le ralenti mécanique</strong> pour redescendre la butée d'air."
-        },
-        {
-            level: "standard",
-            behavior: "ralenti",
-            symptom: "Après une accélération, le ralenti reste perché très haut pendant 3 à 5 secondes avant de chuter brutalement à sa valeur normale.",
-            phenomenon: "Cycle d'aspiration déficitaire en carburant. Le moteur consomme l'air résiduel avant que le circuit de reprise n'injecte assez d'essence pour stabiliser le régime.",
-            diag: "Déséquilibre classique : Vis de reprise trop fermée (pauvre) associée à une vis de ralenti mécanique trop basse.",
-            action: "<strong>Ouvrir la vis de Reprise</strong> d'1/8 de tour, puis <strong>visser le ralenti mécanique</strong> pour stabiliser le palier bas."
-        },
-        {
-            level: "advanced",
-            behavior: "ralenti",
-            symptom: "Le ralenti retombe en deux temps de manière totalement erratique et aléatoire, insensible aux ajustements de la vis de reprise.",
-            phenomenon: "Aspiration parasite non mesurée en aval du venturi du carburateur.",
-            diag: "Prise d'air structurelle. Le joint torique d'embase du carburateur est fendu, ou le soufflet en caoutchouc du boisseau est micro-percé.",
-            action: "Remplacer le joint torique d'embase du carburateur et inspecter l'étanchéité périphérique du soufflet de boisseau."
-        },
-        {
-            level: "advanced",
-            behavior: "ralenti",
-            symptom: "Le ralenti reste haut à l'arrêt sur la piste et ne rechute à sa valeur normale que lorsque la voiture est immobilisée manuellement.",
-            phenomenon: "Friction mécanique transmettant l'énergie résiduelle de la transmission au vilebrequin.",
-            diag: "Ressort d'embrayage détendu ou masselotte endommagée. L'embrayage reste en prise partielle et maintient artificiellement le régime moteur.",
-            action: "Démonter la cloche d'embrayage, contrôler la tension des ressorts et remplacer l'ensemble si usure asymétrique."
-        },
-        {
-            level: "advanced",
-            behavior: "ralenti",
-            symptom: "Le moteur cale instantanément après un retour au stand statique de plus de 10 secondes, mais redémarre immédiatement.",
-            phenomenon: "Heat Soak (conduction calorifique inversée). L'absence de flux d'air frais dans le venturi fait monter la température du carburateur par contact avec le carter. Le carburant entre en ébullition avant le gicleur.",
-            diag: "Vaporisation précoce du carburant dans le corps du carburateur (poches de gaz isolantes).",
-            action: "Remplacer ou repositionner la bague d'isolation thermique en résine phénolique entre le carburateur et le carter en alu."
-        },
-
-        // ========================================================
-        // MÉCANIQUE / CHÂSSIS / PERIPHÉRIQUES
-        // ========================================================
-        {
-            level: "standard",
-            behavior: "mecanique",
-            symptom: "Le moteur cale systématiquement dès que l'opérateur applique une commande de freinage ferme sur la radiocommande.",
-            phenomenon: "Fermeture physique totale du passage d'air par écrasement de la butée.",
-            diag: "Tringlerie mal réglée forçant sur le boisseau en l'absence de garde mécanique. La vis de ralenti mécanique n'assure plus son rôle de butée.",
-            action: "Ajuster les bagues de tringlerie pour laisser un jeu fonctionnel de 1 mm au boisseau sous contrainte de freinage, puis visser le ralenti mécanique."
-        },
-        {
-            level: "standard",
-            behavior: "mecanique",
-            symptom: "Le moteur coupe net lors de la réception d'un saut ou du passage sur une succession de bosses prononcées.",
-            phenomenon: "Rupture de la phase d'incandescence du catalyseur sous contrainte mécanique verticale.",
-            diag: "Filament de la bougie distendu ou affaissé. Le choc déforme le filament et brise instantanément le cycle d'auto-allumage.",
-            action: "<strong>Changer la bougie</strong> par une neuve (Ultimate P4 / OS P4). Sa résistance structurelle interne est compromise."
-        },
-        {
-            level: "advanced",
-            behavior: "mecanique",
-            symptom: "Le moteur fonctionne parfaitement sur le banc de démarrage mais cale instantanément dès que les roues touchent le sol au neutre.",
-            phenomenon: "Verrouillage cinématique direct de l'équipage mobile.",
-            diag: "Jeu axial insuffisant ou nul de la cloche d'embrayage. La mise en charge du châssis contraint la cloche contre le vilebrequin, bloquant le moteur.",
-            action: "Ajouter ou retirer des rondelles de calage pour restituer un jeu axial libre compris entre 0.1 mm et 0.2 mm sur la cloche."
-        },
-        {
-            level: "advanced",
-            behavior: "mecanique",
-            symptom: "Le moteur appauvrit sa carburation et surchauffe uniquement lorsque le niveau du réservoir descend sous la moitié.",
-            phenomenon: "Chute de la pression hydrostatique interne non compensée par la pressurisation du résonateur.",
-            diag: "Micro-fuite de pressurisation (durite poreuse, joint de bouchon de réservoir usé) réduisant le refoulement de carburant en fin de réservoir.",
-            action: "Remplacer la durite reliant le résonateur au réservoir et contrôler l'étanchéité du joint d'étanchéité du bouchon."
-        }
-    ];
-
-    const casesGrid = document.getElementById('casesGrid');
-    const searchInput = document.getElementById('searchInput');
-    const levelFilterGroup = document.getElementById('levelFilterGroup');
-    const behaviorFilterGroup = document.getElementById('behaviorFilterGroup');
-    const noResults = document.getElementById('noResults');
-
-    let currentLevel = 'all';
-    let currentBehavior = 'all';
-    let currentSearch = '';
-
-    function renderCards() {
-        casesGrid.innerHTML = '';
-        let visibleCount = 0;
-
-        masterDatabase.forEach(item => {
-            const matchesLevel = currentLevel === 'all' || item.level === currentLevel;
-            const matchesBehavior = currentBehavior === 'all' || item.behavior === currentBehavior;
-            
-            const searchText = (item.symptom + ' ' + item.phenomenon + ' ' + item.diag + ' ' + item.action).toLowerCase();
-            const matchesSearch = searchText.includes(currentSearch.toLowerCase());
-
-            if (matchesLevel && matchesBehavior && matchesSearch) {
-                visibleCount++;
-                const card = document.createElement('div');
-                card.className = 'card';
-                
-                const levelBadge = item.level === 'standard' ? 'Usuel / Carburation' : 'Physique / Avancé';
-
-                card.innerHTML = `
-                    <div>
-                        <div class="card-header">
-                            <span class="symptom-title">🔍 ${item.symptom}</span>
-                            <span class="badge badge-${item.level}">${levelBadge}</span>
+            <div class="grid-2">
+                <div class="space-y">
+                    <div class="card no-print">
+                        <div class="card-title">
+                            <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                            Système Expert de Diagnostic Guidé
                         </div>
-                        <div class="section-block">
-                            <div class="section-title">Phénomène Physique Sous-Jacent :</div>
-                            <div class="phenomenon-text">${item.phenomenon}</div>
+                        <p class="text-sm">Le moteur isole itérativement les causes cinétiques de panne sur la base de votre profil de carburation.</p>
+                        
+                        <div class="progress-bar-container">
+                            <div class="progress-bar-fill" id="diagProgress"></div>
                         </div>
-                        <div class="section-block">
-                            <div class="section-title">Analyse & Diagnostic :</div>
-                            <div class="diagnosis-text">${item.diag}</div>
+
+                        <div id="questionContainer" style="min-height: 140px; margin-top: 1rem;">
+                            </div>
+
+                        <div style="display: flex; gap: 0.5rem; margin-top: 1.5rem; justify-content: space-between;">
+                            <button class="btn" id="btnUndo"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 7v6h6M21 17a9 9 0 0 0-9-9 9 9 0 0 0-6 2.3L3 13"/></svg> Annuler</button>
+                            <button class="btn btn-danger" id="btnResetDiag">Réinitialiser l'Arbre</button>
                         </div>
                     </div>
-                    <div class="action-box">
-                        <strong>🛠️ Action Corrective :</strong> ${item.action}
+
+                    <div class="card no-print">
+                        <div class="card-title">Journal Clinique des Variables Qualifiées</div>
+                        <div id="timelineResponses" class="space-y" style="max-height: 200px; overflow-y: auto; gap: 0.4rem;">
+                            <p class="text-sm text-muted">Aucun symptôme déclaré pour le moment.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="space-y">
+                    <div class="card">
+                        <div class="card-title">
+                            <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21.21 15.89A10 10 0 1 1 8 2.83M22 12A10 10 0 0 0 12 2v10z"/></svg>
+                            Pondération & Top Diagnostiques
+                        </div>
+                        <div class="canvas-container no-print">
+                            <canvas id="graphCanvas" width="450" height="180"></canvas>
+                        </div>
+                        <div id="causesList" class="space-y" style="max-height: 350px; overflow-y: auto;">
+                            </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="ficheTechniqueWrapper" class="card tech-fiche">
+                </div>
+        </section>
+
+        <section id="assistantView" class="view-section">
+            <div class="grid-2">
+                <div class="card">
+                    <div class="card-title">Conditions Environnementales d'Écurie</div>
+                    <form id="assistantForm" class="space-y">
+                        <div class="grid-2" style="gap:1rem;">
+                            <div class="form-group">
+                                <label>Température Ambiante (°C)</label>
+                                <input type="number" class="form-control" id="astTemp" value="20">
+                            </div>
+                            <div class="form-group">
+                                <label>Humidité Relative (%)</label>
+                                <input type="number" class="form-control" id="astHum" value="45">
+                            </div>
+                        </div>
+                        <div class="grid-2" style="gap:1rem;">
+                            <div class="form-group">
+                                <label>Altitude de la Piste (m)</label>
+                                <input type="number" class="form-control" id="astAlt" value="0">
+                            </div>
+                            <div class="form-group">
+                                <label>Taux de Nitrométhane de Carburant</label>
+                                <select class="form-control" id="astNitro">
+                                    <option value="25">25% Nitro (Loisir Avancé)</option>
+                                    <option value="30" selected>30% Nitro (Compétition Homologué)</option>
+                                    <option value="16">16% Nitro (Réglementations restrictives)</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="grid-2" style="gap:1rem;">
+                            <div class="form-group">
+                                <label>Grip du Circuit</label>
+                                <select class="form-control" id="astGrip">
+                                    <option value="low">Faible (Glissant / Poussière)</option>
+                                    <option value="medium" selected>Médium (Standard)</option>
+                                    <option value="high">Élevé (Tapis / Huilé / Gommé)</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Style Globale de Pilotage</label>
+                                <select class="form-control" id="astStyle">
+                                    <option value="fluid">Fluide (Vitesse de passage)</option>
+                                    <option value="aggressive" selected>Agressif (Relance brute aux freins)</option>
+                                </select>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="card" style="border-color: var(--accent);">
+                    <div class="card-title text-accent">
+                        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>
+                        Baseline Empirique de Carburation Recommandée
+                    </div>
+                    <div id="assistantResult" class="space-y">
+                        </div>
+                </div>
+            </div>
+
+            <div class="card" style="margin-top:1.5rem;">
+                <div class="card-title">Comparateur de Setups de Référence d'Atelier</div>
+                <div class="grid-2">
+                    <div>
+                        <h4 style="margin-bottom:0.5rem; color:var(--text-muted);">Configuration Simulée Actuelle</h4>
+                        <div id="compSetupA" class="text-sm"></div>
+                    </div>
+                    <div style="border-left: 1px solid var(--border); padding-left: 1.5rem;">
+                        <h4 style="margin-bottom:0.5rem; color:var(--accent);">Configuration Enregistrée (Mémoire)</h4>
+                        <div id="compSetupB" class="text-sm text-muted">Aucun profil enregistré dans les registres.</div>
+                    </div>
+                </div>
+                <div style="margin-top:1rem; text-align:right;">
+                    <button class="btn btn-sm btn-primary" id="btnSaveSetupRef">Enregistrer ce setup comme point de référence</button>
+                </div>
+            </div>
+        </section>
+
+        <section id="tablesView" class="view-section">
+            <div class="grid-2">
+                <div class="card">
+                    <div class="card-title">Matrice Critique des Bougies de Compétition (.21)</div>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Climat / Température</th>
+                                    <th>Indice Conseillé</th>
+                                    <th>Filament</th>
+                                    <th>Comportement Dynamique</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr><td>Grand Froid (&lt; 10°C)</td><td>OS P3 / Turbo T4</td><td>Ultra Chaud</td><td>Stabilise le ralenti et empêche l'engorgement par basses températures.</td></tr>
+                                <tr><td>Tempéré (10°C - 20°C)</td><td>OS P3 / Turbo T5</td><td>Médium-Chaud</td><td>Le choix standard pour un équilibre parfait entre couple et pointe.</td></tr>
+                                <tr><td>Estival (20°C - 30°C)</td><td>OS P4 / Turbo T6</td><td>Médium-Froid</td><td>Évite l'auto-allumage précoce et stabilise la pointe.</td></tr>
+                                <tr><td>Canicule (&gt; 30°C)</td><td>OS P5 / Turbo T7</td><td>Froid</td><td>Protège l'embiellage contre le cliquetis destructeur.</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-title">Ratios d'Épaisseur de Décompression & Taux Nitro</div>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Pourcentage Nitro</th>
+                                    <th>Épaisseur Joint de Culasse</th>
+                                    <th>Avance à l'allumage</th>
+                                    <th>Lubrifiant Conseillé</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr><td>16% Nitro</td><td>0.10 mm - 0.15 mm</td><td>Très avancée (Haute compression)</td><td>9% Huile de synthèse</td></tr>
+                                <tr><td>25% Nitro</td><td>0.20 mm</td><td>Standard d'usine</td><td>10% Synthèse + Ricin</td></tr>
+                                <tr><td>30% Nitro</td><td>0.25 mm - 0.30 mm</td><td>Retardée (Ajout de cale de 0.1)</td><td>11% à 12% Compétition</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="toolsView" class="view-section">
+            <div class="grid-3">
+                <div class="card">
+                    <div class="card-title">Calculateur de Densité d'Air Relative (RAD)</div>
+                    <div class="space-y">
+                        <div class="form-group"><label>Température Ambiante (°C)</label><input type="number" id="calcTemp" class="form-control" value="20"></div>
+                        <div class="form-group"><label>Pression Barométrique (hPa)</label><input type="number" id="calcPres" class="form-control" value="1013"></div>
+                        <button class="btn btn-primary" id="btnCalcDensity" style="width:100%;">Calculer l'Indice RAD</button>
+                        <div id="densityResult" style="margin-top:1rem; padding:0.75rem; background:var(--bg-main); border-radius:6px; font-size:0.85rem;"></div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-title">Estimateur Consommation & Autonomie Finale</div>
+                    <div class="space-y">
+                        <div class="form-group"><label>Temps de Roulage Test (minutes)</label><input type="number" id="calcRunTime" class="form-control" value="5"></div>
+                        <div class="form-group"><label>Carburant restant mesuré (ml)</label><input type="number" id="calcRestFuel" class="form-control" value="40"></div>
+                        <button class="btn btn-primary" id="btnCalcAutonomy" style="width:100%;">Calculer l'Autonomie Critique</button>
+                        <div id="autonomyResult" style="margin-top:1rem; padding:0.75rem; background:var(--bg-main); border-radius:6px; font-size:0.85rem;"></div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-title">Interprétation de l'État Spéculaire du Filament</div>
+                    <div class="space-y">
+                        <div class="form-group">
+                            <label>Aspect Microscopique du Filament</label>
+                            <select id="toolPlugAspect" class="form-control">
+                                <option value="wet">Gorgé de carburant, ultra brillant</option>
+                                <option value="grey">Gris mat, surface légèrement sablée</option>
+                                <option value="white">Blanc givré, spires déformées ou enfoncées</option>
+                                <option value="broken">Filament rompu ou fondu au ras de la masse</option>
+                                <option value="normal">Légèrement doré, intact</option>
+                            </select>
+                        </div>
+                        <button class="btn btn-primary" id="btnDiagPlug" style="width:100%;">Diagnostiquer la Bougie</button>
+                        <div id="plugToolResult" style="margin-top:1rem; padding:0.75rem; background:var(--bg-main); border-radius:6px; font-size:0.85rem;"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="glossaryView" class="view-section">
+            <div class="card" style="margin-bottom:1.5rem;">
+                <div class="card-title">Cinétique Vectorielle & Nomenclature d'un Micro-Moteur 3.5cc</div>
+                <div style="text-align:center; padding:1.5rem; background:var(--bg-main); border-radius:8px; border:1px solid var(--border);">
+                    <svg viewBox="0 0 400 220" width="100%" style="max-width:500px; height:auto;">
+                        <rect x="150" y="40" width="100" height="100" rx="4" fill="none" stroke="var(--border)" stroke-width="2"/>
+                        <line x1="130" y1="40" x2="270" y2="40" stroke="var(--accent)" stroke-width="4" />
+                        <text x="200" y="30" fill="var(--accent)" font-size="10" font-weight="700" text-anchor="middle">CHAMBRE DE SQUISH / INSERT</text>
+                        <rect x="160" y="60" width="80" height="35" rx="2" fill="var(--bg-muted)" stroke="var(--text-muted)" stroke-width="1.5"/>
+                        <text x="200" y="81" fill="var(--text-main)" font-size="11" font-weight="600" text-anchor="middle">Piston (Technologie ABC)</text>
+                        <line x1="200" y1="95" x2="200" y2="150" stroke="var(--text-muted)" stroke-width="3" stroke-linecap="round"/>
+                        <circle cx="200" cy="95" r="3" fill="var(--danger)"/>
+                        <circle cx="200" cy="150" r="4" fill="var(--danger)"/>
+                        <text x="212" y="125" fill="var(--text-muted)" font-size="10">Bielle 7075-T6</text>
+                        <circle cx="200" cy="150" r="20" fill="none" stroke="var(--border)" stroke-width="2" stroke-dasharray="4"/>
+                        <text x="200" y="195" fill="var(--text-muted)" font-size="10" text-anchor="middle">Vilebrequin équilibré (Maneton DG)</text>
+                    </svg>
+                </div>
+            </div>
+            <div class="glossary-grid" id="glossaryContainer">
+                </div>
+        </section>
+
+        <section id="historyView" class="view-section">
+            <div class="grid-2">
+                <div class="card">
+                    <div class="card-title">Rapports Enregistrés en LocalStorage</div>
+                    <div id="historyList" class="space-y" style="max-height: 300px; overflow-y: auto;">
+                        <p class="text-sm text-muted">Aucune archive d'atelier stockée.</p>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-title">Portabilité & Partage des Profils de Carburation</div>
+                    <p class="text-sm text-muted" style="margin-bottom:1.5rem;">Sauvegardez l'intégralité des états de votre système expert au format standard JSON ou importez un profil externe.</p>
+                    <div class="space-y">
+                        <button class="btn btn-primary" id="btnExportJSON" style="width:100%;">Exporter la Base Clinique d'Atelier (.json)</button>
+                        <div style="border: 2px dashed var(--border); padding: 1.5rem; text-align: center; border-radius: 8px;">
+                            <label for="importFile" style="cursor:pointer; color:var(--accent); font-weight:600; display:block;">Sélectionner le fichier JSON à réimporter</label>
+                            <input type="file" id="importFile" accept=".json" style="display:none;">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <script>
+        // --- BASE DE CONNAISSANCES CLINIQUE EXPERTE DU MOTEUR NITRO .21 ---
+        const SYMPTOMS = [
+            { id: "s_cale_ralenti_chaud", text: "Le moteur cale au ralenti uniquement à chaud (après 2-3 minutes)", category: "Thermique & Reprise" },
+            { id: "s_cale_ralenti_froid", text: "Le moteur cale au ralenti uniquement à froid", category: "Carburation Basse" },
+            { id: "s_cale_acceleration", text: "Trou à l'accélération brutal (le moteur coupe net au coup de gaz)", category: "Dynamique Boisseau" },
+            { id: "s_cale_saut", text: "Coupure immédiate à la réception ou sur l'impulsion d'un saut", category: "Mécanique / Réservoir" },
+            { id: "s_cale_pleingaz", text: "Le moteur s'éteint en fin de ligne droite à pleine charge", category: "Alimentation Haute" },
+            { id: "s_refuse_demarrer", text: "Refus total de démarrer malgré l'action du banc", category: "Démarrage & Allumage" },
+            { id: "s_regime_haut_instable", text: "Le régime reste accéléré et tarde à redescendre au ralenti", category: "Prises d'air parasite" },
+            { id: "s_regime_chute_trop_vite", text: "Le régime s'effondre sous le ralenti puis cale après une pointe", category: "Ajustement Reprise" },
+            { id: "s_fume_pas", text: "Absence totale de filet de fumée visible à pleine charge", category: "Carburation Critique" },
+            { id: "s_bulles_durite", text: "Présence de micro-bulles d'air continues dans la ligne d'alimentation", category: "Ligne Pressurisation" },
+            { id: "s_chauffe_extreme", text: "Surchauffe thermique mesurée supérieure à 135°C", category: "Thermique" },
+            { id: "s_compression_nulle", text: "Le volant moteur tourne librement sans aucun point dur au PMH à chaud", category: "Groupe Thermique ABC" },
+            { id: "s_ratatouille_mi_regime", text: "Broutement / ratatouillage prononcé lors de la transition mi-régime", category: "Carburation Moyenne" },
+            { id: "s_detonation", text: "Bruit sec de cliquetis métallique audible à très haut régime", category: "Allumage / Compression" }
+        ];
+
+        const CAUSES = [
+            {
+                id: "c_richesse_trop_pauvre",
+                title: "Pointeau de richesse principal trop fermé (Mélange Pauvre)",
+                probability: 15,
+                criticite: "high",
+                risk: "Serrage thermique immédiat par rupture du film de lubrifiant",
+                difficulty: "Facile",
+                time: "2 min",
+                description: "Le débit volumétrique de carburant entrant dans le venturi à pleine ouverture est insuffisant, créant un excès d'oxygène et une hausse thermique déstructurante.",
+                symptoms_weights: { "s_fume_pas": 5, "s_chauffe_extreme": 5, "s_cale_pleingaz": 4, "s_detonation": 3 },
+                confirmation: "Le moteur coupe net en fin de ligne droite avec un bruit sourd ('Booooo'). Ouvrir la richesse d'un quart de tour résout immédiatement le symptôme.",
+                exclusion: "Le moteur rejette une trace d'huile claire par l'échappement et régule sa température sous 118°C.",
+                reparation: "Dévisser le pointeau principal par incréments d'1/8 de tour. Privilégier un comportement gras en début de séance.",
+                preventive: "Ajuster la richesse en fonction du RAD de l'air. Ne jamais chercher la pointe absolue dès le premier réservoir."
+            },
+            {
+                id: "c_reprise_trop_grasse",
+                title: "Vis de reprise trop ouverte (Mélange Bas Régime engorgé)",
+                probability: 15,
+                criticite: "medium",
+                risk: "Engorgement au redémarrage, chute d'autonomie et perte de motricité",
+                difficulty: "Facile",
+                time: "3 min",
+                description: "Le flux de méthanol au ralenti sature le carter moteur. À l'accélération, l'excès de carburant imbrûlé noie le filament de la bougie.",
+                symptoms_weights: { "s_regime_chute_trop_vite": 4, "s_ratatouille_mi_regime": 5, "s_cale_acceleration": 2 },
+                confirmation: "Le moteur fume excessivement au démarrage, broute, et peine à vider son carter pour prendre ses tours.",
+                exclusion: "Le moteur s'emballe dès le retour au ralenti, confirmant au contraire un réglage de reprise trop sec.",
+                reparation: "Visser (fermer) la vis de reprise micrométrique par pas d'1/12 de tour maximum.",
+                preventive: "Vérifier régulièrement l'étanchéité des joints toriques logés sur le corps du boisseau de reprise."
+            },
+            {
+                id: "c_prise_air_roulement",
+                title: "Infiltration d'air parasite via le roulement moteur avant",
+                probability: 15,
+                criticite: "high",
+                risk: "Instabilité totale de la carburation, surchauffe et usure abrasive interne",
+                difficulty: "Expert",
+                time: "45 min",
+                description: "Le joint spi ou flasque d'étanchéité du roulement à billes avant a cédé sous l'effet de la pré-compression du carter inférieur.",
+                symptoms_weights: { "s_regime_haut_instable": 5, "s_chauffe_extreme": 3, "s_cale_ralenti_chaud": 4 },
+                confirmation: "Présence de projections grasses sombres ou de micro-bulles chargées de poussière derrière le volant moteur.",
+                exclusion: "La zone située sous le volant moteur est sèche. Le retour au ralenti est net et instantané.",
+                reparation: "Remplacement du roulement avant. Extraire le vilebrequin et utiliser un outil extracteur thermique d'atelier.",
+                preventive: "Éviter l'application directe de nettoyant frein haute pression sur le nez du carter moteur."
+            },
+            {
+                id: "c_bougie_calaminee",
+                title: "Filament de bougie détérioré ou perte de pouvoir catalytique",
+                probability: 15,
+                criticite: "low",
+                risk: "Calages intempestifs en course, ratés d'allumage répétés",
+                difficulty: "Facile",
+                time: "1 min",
+                description: "L'alliage de platine de la bougie Turbo est calaminé par les résidus de combustion du ricin ou déformé par une détonation excessive.",
+                symptoms_weights: { "s_refuse_demarrer": 5, "s_cale_acceleration": 3, "s_ratatouille_mi_regime": 2 },
+                confirmation: "La bougie s'allume avec une teinte orange terne au lieu d'un jaune éclatant sur le socquet d'allumage.",
+                exclusion: "Le filament est parfaitement brillant, non enfoncé et maintient le ralenti dès le retrait du chauffe-bougie.",
+                reparation: "Changer la bougie pour un indice thermique adapté (ex: OS P3 pour temps frais, P4 si &gt;25°C).",
+                preventive: "Remplacer préventivement la bougie avant les phases finales de Championnat."
+            },
+            {
+                id: "c_pressurisation_bouchon",
+                title: "Défaut d'étanchéité de la ligne de pressurisation ou du réservoir",
+                probability: 15,
+                criticite: "medium",
+                risk: "Appauvrissement critique linéaire au fur et à mesure du vidage du réservoir",
+                difficulty: "Facile",
+                time: "5 min",
+                description: "La contre-pression générée par le résonateur ne parvient plus à pousser le carburant vers le carburateur à cause d'une fuite sur la durite ou le joint du bouchon.",
+                symptoms_weights: { "s_cale_pleingaz": 5, "s_bulles_durite": 5, "s_cale_virage": 3 },
+                confirmation: "Le comportement moteur est nominal sur le premier tiers du réservoir puis devient extrêmement pauvre à mi-réservoir.",
+                exclusion: "Le réservoir maintient sa pression interne lorsqu'on insuffle de l'air manuellement par la durite d'échappement.",
+                reparation: "Changer les durites silicone et remplacer le joint torique du bouchon à clapet du réservoir.",
+                preventive: "Remplacer l'ensemble des durites d'alimentation toutes les 3 courses de ligue."
+            },
+            {
+                id: "c_groupe_thermique_rince",
+                title: "Usure de la conicité Chemise / Piston (Perte de compression ABC)",
+                probability: 15,
+                criticite: "medium",
+                risk: "Instabilité thermique totale, puissance moteur anémique",
+                difficulty: "Expert",
+                time: "30 min",
+                description: "Le piston en alliage d'aluminium n'assure plus l'étanchéité mécanique au point mort haut à cause des frictions répétées et de l'usure du traitement de surface chrome de la chemise.",
+                symptoms_weights: { "s_compression_nulle": 6, "s_cale_ralenti_chaud": 5, "s_refuse_demarrer": 3 },
+                confirmation: "Moteur chaud à 110°C, le volant moteur peut être tourné à la main sans ressentir le point de blocage mécanique caractéristique du PMH.",
+                exclusion: "Le moteur bloque fermement à chaud et conserve un excellent couple résiduel lors des relances.",
+                reparation: "Remplacement de l'ensemble chemise, piston et bielle, suivi d'un cycle complet de rodage japonais sur banc.",
+                preventive: "Ne jamais faire tourner le moteur sans lubrifiant de filtre à air haute viscosité."
+            }
+        ];
+
+        const GLOSSARY = [
+            { term: "Technologie ABC", def: "Piston en aluminium (A) appairé à une chemise en laiton (B) revêtue de chrome dur (C). La conicité de la chemise assure l'étanchéité parfaite par dilatation thermique lors du fonctionnement." },
+            { term: "RAD (Relative Air Density)", def: "Indicateur de la densité moléculaire de l'air calculé selon la pression et la température. Un RAD élevé apporte plus d'oxygène et nécessite d'enrichir la carburation." },
+            { term: "Vis de Reprise", def: "Aiguille conique solidaire du boisseau régulant précisément le débit de carburant injecté sur les phases critiques d'accélération et de ralenti." },
+            { term: "Vapor Lock", def: "Phénomène physique où le méthanol s'évapore et bout à l'intérieur du carburateur sous l'action d'une surchauffe, créant des tampons gazeux bloquant l'alimentation." },
+            { term: "Squish", def: "Distance minimale mesurée au PMH entre la tête du piston et la bande de squish de l'insert de culasse, déterminant la vitesse de propagation du front de flamme." }
+        ];
+
+        // --- CODE DE L'APPLICATION SINGLE PAGE (STUDIO ARCHITECTURE) ---
+        class EngineStudioApp {
+            constructor() {
+                this.userAnswers = {};
+                this.activeCauses = JSON.parse(JSON.stringify(CAUSES));
+                this.diagHistory = JSON.parse(localStorage.getItem("nitro_diag_history")) || [];
+                this.savedSetupRef = JSON.parse(localStorage.getItem("nitro_setup_ref")) || null;
+                this.userLevel = "expert";
+                this.undoStack = [];
+
+                this.initElements();
+                this.bindEvents();
+                this.runInferenceEngine();
+                this.runAssistantLogic();
+                this.renderGlossary();
+                this.renderHistory();
+            }
+
+            initElements() {
+                this.navButtons = document.querySelectorAll("#mainNav button");
+                this.sections = document.querySelectorAll(".view-section");
+                this.questionContainer = document.getElementById("questionContainer");
+                this.causesList = document.getElementById("causesList");
+                this.searchSymptom = document.getElementById("searchSymptom");
+                this.timelineResponses = document.getElementById("timelineResponses");
+                this.graphCanvas = document.getElementById("graphCanvas");
+                this.levelToggleButtons = document.querySelectorAll("#levelToggle button");
+                this.fullscreenBtn = document.getElementById("fullscreenBtn");
+            }
+
+            bindEvents() {
+                this.navButtons.forEach(btn => {
+                    btn.addEventListener("click", () => {
+                        this.navButtons.forEach(b => b.classList.remove("active"));
+                        this.sections.forEach(s => s.classList.remove("active"));
+                        btn.classList.add("active");
+                        const view = btn.dataset.view;
+                        document.getElementById(`${view}View`).classList.add("active");
+                        if(view === "diagnostic") this.drawGraph();
+                    });
+                });
+
+                this.levelToggleButtons.forEach(btn => {
+                    btn.addEventListener("click", () => {
+                        this.levelToggleButtons.forEach(b => b.classList.remove("active"));
+                        btn.classList.add("active");
+                        this.userLevel = btn.dataset.level;
+                        this.renderQuestion();
+                    });
+                });
+
+                this.searchSymptom.addEventListener("input", (e) => {
+                    const query = e.target.value.toLowerCase().trim();
+                    if(query.length > 1) {
+                        const matched = SYMPTOMS.filter(s => s.text.toLowerCase().includes(query));
+                        this.renderSearchResults(matched);
+                    } else {
+                        this.renderQuestion();
+                    }
+                });
+
+                document.getElementById("btnResetDiag").addEventListener("click", () => this.resetDiagnostic());
+                document.getElementById("btnUndo").addEventListener("click", () => this.undoLastAnswer());
+                document.getElementById("assistantForm").addEventListener("input", () => this.runAssistantLogic());
+                document.getElementById("btnSaveSetupRef").addEventListener("click", () => this.saveCurrentSetupRef());
+                document.getElementById("btnCalcDensity").addEventListener("click", () => this.calculateDensity());
+                document.getElementById("btnCalcAutonomy").addEventListener("click", () => this.calculateAutonomy());
+                document.getElementById("btnDiagPlug").addEventListener("click", () => this.diagnosePlugTool());
+                document.getElementById("btnExportJSON").addEventListener("click", () => this.exportStudioData());
+                document.getElementById("importFile").addEventListener("change", (e) => this.importStudioData(e));
+
+                this.fullscreenBtn.addEventListener("click", () => {
+                    if (!document.fullscreenElement) {
+                        document.documentElement.requestFullscreen().catch(() => {});
+                    } else {
+                        document.exitFullscreen();
+                    }
+                });
+            }
+
+            runInferenceEngine() {
+                this.activeCauses.forEach(c => c.probability = 15);
+                let answeredCount = 0;
+
+                for (const [symptomId, answer] of Object.entries(this.userAnswers)) {
+                    answeredCount++;
+                    this.activeCauses.forEach(cause => {
+                        const weight = cause.symptoms_weights[symptomId];
+                        if (weight) {
+                            if (answer === "oui") cause.probability += (weight * 20);
+                            else if (answer === "parfois") cause.probability += (weight * 8);
+                            else if (answer === "non") cause.probability -= (weight * 12);
+                        }
+                    });
+                }
+
+                let totalScore = this.activeCauses.reduce((acc, c) => acc + Math.max(1, c.probability), 0);
+                this.activeCauses.forEach(c => {
+                    let rawPct = Math.round((Math.max(1, c.probability) / totalScore) * 100);
+                    c.probability = Math.min(99, Math.max(2, rawPct));
+                });
+
+                this.activeCauses.sort((a, b) => b.probability - a.probability);
+
+                this.renderCausesList();
+                this.renderTimeline(answeredCount);
+                this.drawGraph();
+                
+                const progressPct = Math.min(100, Math.round((answeredCount / SYMPTOMS.length) * 100));
+                document.getElementById("diagProgress").style.width = `${progressPct || 4}%`;
+
+                if(this.searchSymptom.value.trim() === "") {
+                    this.renderQuestion();
+                }
+            }
+
+            renderQuestion() {
+                let targetSymptom = null;
+                const answeredIds = Object.keys(this.userAnswers);
+
+                for (let cause of this.activeCauses) {
+                    for (let symId of Object.keys(cause.symptoms_weights)) {
+                        if (!answeredIds.includes(symId)) {
+                            targetSymptom = SYMPTOMS.find(s => s.id === symId);
+                            break;
+                        }
+                    }
+                    if (targetSymptom) break;
+                }
+
+                if (!targetSymptom) {
+                    targetSymptom = SYMPTOMS.find(s => !answeredIds.includes(s.id));
+                }
+
+                if (!targetSymptom) {
+                    this.questionContainer.innerHTML = `
+                        <div style="text-align:center; padding:1rem;">
+                            <h4 class="text-success">Convergence Algorithmique Complète</h4>
+                            <p class="text-sm text-muted" style="margin-top:0.5rem;">Toutes les variables ont été traitées. Sélectionnez une fiche de réparation à droite.</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                this.questionContainer.innerHTML = `
+                    <div style="margin-bottom:0.8rem;">
+                        <span class="badge badge-info">${targetSymptom.category}</span>
+                        <h4 style="margin-top:0.4rem; font-size:1rem; font-weight:600;">${targetSymptom.text} ?</h4>
+                    </div>
+                    <div class="diag-response-grid">
+                        <button class="response-btn" onclick="app.submitAnswer('${targetSymptom.id}', 'oui')">Oui</button>
+                        <button class="response-btn" onclick="app.submitAnswer('${targetSymptom.id}', 'non')">Non</button>
+                        <button class="response-btn" onclick="app.submitAnswer('${targetSymptom.id}', 'parfois')">Parfois</button>
                     </div>
                 `;
-                casesGrid.appendChild(card);
             }
+
+            renderSearchResults(results) {
+                if(results.length === 0) {
+                    this.questionContainer.innerHTML = `<p class="text-sm text-muted">Aucun symptôme trouvé.</p>`;
+                    return;
+                }
+                let html = `<div class="space-y" style="max-height:180px; overflow-y:auto; gap:0.4rem;">`;
+                results.forEach(s => {
+                    html += `
+                        <div class="symptom-btn" onclick="app.submitAnswer('${s.id}', 'oui'); document.getElementById('searchSymptom').value='';">
+                            <span>${s.text}</span>
+                            <span class="text-accent" style="font-weight:600;">+ Qualifier</span>
+                        </div>
+                    `;
+                });
+                html += `</div>`;
+                this.questionContainer.innerHTML = html;
+            }
+
+            submitAnswer(symptomId, value) {
+                this.undoStack.push(JSON.parse(JSON.stringify(this.userAnswers)));
+                this.userAnswers[symptomId] = value;
+                this.runInferenceEngine();
+                this.autoSaveDiagnostic();
+            }
+
+            undoLastAnswer() {
+                if (this.undoStack.length > 0) {
+                    this.userAnswers = this.undoStack.pop();
+                    this.runInferenceEngine();
+                }
+            }
+
+            resetDiagnostic() {
+                this.userAnswers = {};
+                this.undoStack = [];
+                this.runInferenceEngine();
+            }
+
+            renderCausesList() {
+                this.causesList.innerHTML = "";
+                this.activeCauses.forEach(cause => {
+                    const badgeClass = cause.criticite === "high" ? "badge-danger" : (cause.criticite === "medium" ? "badge-warning" : "badge-success");
+                    const div = document.createElement("div");
+                    div.className = "cause-list-item";
+                    div.innerHTML = `
+                        <div style="flex:1; padding-right:1rem;">
+                            <div style="font-weight:600; font-size:0.9rem;">${cause.title}</div>
+                            <div class="flex-center" style="margin-top:0.3rem; flex-wrap:wrap;">
+                                <span class="badge ${badgeClass}">${cause.criticite}</span>
+                                <span class="text-sm text-muted">Risque : ${cause.risk}</span>
+                            </div>
+                        </div>
+                        <div style="text-align:right; min-width:60px;">
+                            <span class="text-xl text-accent">${cause.probability}%</span>
+                        </div>
+                    `;
+                    div.addEventListener("click", () => this.showTechFiche(cause.id));
+                    this.causesList.appendChild(div);
+                });
+            }
+
+            renderTimeline(count) {
+                this.timelineResponses.innerHTML = "";
+                if (count === 0) {
+                    this.timelineResponses.innerHTML = `<p class="text-sm text-muted">Aucun symptôme déclaré pour le moment.</p>`;
+                    return;
+                }
+                for (const [symptomId, answer] of Object.entries(this.userAnswers)) {
+                    const s = SYMPTOMS.find(sym => sym.id === symptomId);
+                    if(s) {
+                        this.timelineResponses.innerHTML += `
+                            <div class="history-item" style="padding:0.4rem 0.6rem; font-size:0.8rem; margin-bottom:0.25rem;">
+                                <span>${s.text} &rarr; <strong class="text-accent">${answer.toUpperCase()}</strong></span>
+                                <button class="btn btn-sm" style="padding:0.1rem 0.3rem;" onclick="app.removeSpecificAnswer('${symptomId}')">×</button>
+                            </div>
+                        `;
+                    }
+                }
+            }
+
+            removeSpecificAnswer(symptomId) {
+                delete this.userAnswers[symptomId];
+                this.runInferenceEngine();
+            }
+
+            drawGraph() {
+                if (!this.graphCanvas) return;
+                const ctx = this.graphCanvas.getContext("2d");
+                ctx.clearRect(0, 0, this.graphCanvas.width, this.graphCanvas.height);
+
+                const topCauses = this.activeCauses.slice(0, 4);
+                let y = 20;
+                topCauses.forEach(cause => {
+                    ctx.fillStyle = "#a1a1aa";
+                    ctx.font = "11px system-ui";
+                    ctx.fillText(cause.title.substring(0, 40) + "...", 10, y);
+
+                    ctx.fillStyle = "#27272a";
+                    ctx.fillRect(10, y + 6, 320, 6);
+
+                    ctx.fillStyle = "#f97316";
+                    ctx.fillRect(10, y + 6, (cause.probability / 100) * 320, 6);
+
+                    ctx.fillStyle = "#f4f4f5";
+                    ctx.font = "bold 11px system-ui";
+                    ctx.fillText(`${cause.probability}%`, 345, y + 13);
+                    y += 40;
+                });
+            }
+
+            showTechFiche(causeId) {
+                const cause = this.activeCauses.find(c => c.id === causeId);
+                const wrapper = document.getElementById("ficheTechniqueWrapper");
+                if(!cause) return;
+
+                const badgeClass = cause.criticite === "high" ? "badge-danger" : (cause.criticite === "medium" ? "badge-warning" : "badge-success");
+
+                wrapper.innerHTML = `
+                    <div class="fiche-header">
+                        <div>
+                            <span class="badge ${badgeClass}" style="margin-bottom:0.5rem;">Criticité : ${cause.criticite}</span>
+                            <h2>${cause.title}</h2>
+                        </div>
+                        <button class="btn btn-primary no-print" onclick="window.print()">Imprimer Fiche</button>
+                    </div>
+                    <div class="grid-2">
+                        <div class="space-y">
+                            <div><strong>Analyse Fonctionnelle :</strong><p class="text-sm text-muted" style="margin-top:0.25rem;">${cause.description}</p></div>
+                            <div><strong>Méthode Globale de Confirmation :</strong><p class="text-sm text-muted" style="margin-top:0.25rem;">${cause.confirmation}</p></div>
+                            <div><strong>Critère d'Exclusion Diagnostique :</strong><p class="text-sm text-muted" style="margin-top:0.25rem;">${cause.exclusion}</p></div>
+                        </div>
+                        <div class="space-y" style="background:var(--bg-main); padding:1.25rem; border-radius:8px; border:1px solid var(--border);">
+                            <div><strong>Protocole d'Intervention :</strong><p class="text-sm text-accent" style="font-weight:500; margin-top:0.25rem;">${cause.reparation}</p></div>
+                            <div><strong>Conseils Préventifs Compétition :</strong><p class="text-sm text-muted" style="margin-top:0.25rem;">${cause.preventive}</p></div>
+                            <div class="grid-3" style="margin-top:0.5rem; text-align:center;">
+                                <div style="background:var(--bg-card); padding:0.5rem; border-radius:4px;"><div class="text-sm font-weight-bold">${cause.difficulty}</div><div style="font-size:0.7rem; color:var(--text-muted);">Complexité</div></div>
+                                <div style="background:var(--bg-card); padding:0.5rem; border-radius:4px;"><div class="text-sm font-weight-bold">${cause.time}</div><div style="font-size:0.7rem; color:var(--text-muted);">Temps requis</div></div>
+                                <div style="background:var(--bg-card); padding:0.5rem; border-radius:4px;"><div class="text-sm font-weight-bold" style="color:var(--danger);">Élevé</div><div style="font-size:0.7rem; color:var(--text-muted);">Risque Moteur</div></div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                wrapper.classList.add("active");
+                wrapper.scrollIntoView({ behavior: 'smooth' });
+            }
+
+            runAssistantLogic() {
+                const temp = parseFloat(document.getElementById("astTemp").value);
+                const alt = parseFloat(document.getElementById("astAlt").value);
+                const style = document.getElementById("astStyle").value;
+                const grip = document.getElementById("astGrip").value;
+
+                let baselineRichesse = "Ouverture standard d'usine (ex: 3 tours complets)";
+                let baselineReprise = "Affleurante au corps de boisseau mécanique";
+                let bougieConseillee = "OS P3 (Filament Médium-Chaud)";
+                let venturiRecommande = "6.5 mm (Standard EFRA)";
+
+                if (temp > 26) {
+                    baselineRichesse = "Ouvrir de 1/8 de tour (Assurer le refroidissement interne)";
+                    bougieConseillee = "OS P4 ou Turbo T6 (Filament Froid)";
+                } else if (temp < 12) {
+                    baselineRichesse = "Fermer de 1/12 de tour (Compenser l'air dense)";
+                    bougieConseillee = "OS P3 / Turbo T4 (Chaud)";
+                }
+
+                if (alt > 500) {
+                    baselineRichesse += " + Fermer de 1/8 de tour (Air rare en altitude)";
+                }
+
+                if (style === "aggressive" || grip === "high") {
+                    venturiRecommande = "7.0 mm à 7.5 mm (Recherche de couple maximal en relance)";
+                } else {
+                    venturiRecommande = "6.0 mm (Optimisation de la consommation linéaire)";
+                }
+
+                document.getElementById("assistantResult").innerHTML = `
+                    <div class="grid-2" style="gap:1rem;">
+                        <div><div class="text-sm">Pointeau de Richesse</div><div style="font-weight:700; color:white;">${baselineRichesse}</div></div>
+                        <div><div class="text-sm">Vis de Reprise</div><div style="font-weight:700; color:white;">${baselineReprise}</div></div>
+                    </div>
+                    <div class="grid-2" style="gap:1rem;">
+                        <div><div class="text-sm">Indice Thermique Bougie</div><div style="font-weight:700; color:var(--accent);">${bougieConseillee}</div></div>
+                        <div><div class="text-sm">Buse de Venturi</div><div style="font-weight:700; color:white;">${venturiRecommande}</div></div>
+                    </div>
+                    <blockquote>Baseline théorique d'usine. Affinez la pointe après un cycle de chauffe complet sur piste.</blockquote>
+                `;
+
+                document.getElementById("compSetupA").innerHTML = `
+                    Temp: ${temp}°C | Altitude: ${alt}m | Venturi cible: <strong>${venturiRecommande}</strong>
+                `;
+            }
+
+            saveCurrentSetupRef() {
+                const temp = document.getElementById("astTemp").value;
+                const alt = document.getElementById("astAlt").value;
+                this.savedSetupRef = { temp, alt, date: new Date().toLocaleDateString() };
+                localStorage.setItem("nitro_setup_ref", JSON.stringify(this.savedSetupRef));
+                
+                document.getElementById("compSetupB").innerHTML = `
+                    Enregistré le ${this.savedSetupRef.date}<br>
+                    Conditions: ${this.savedSetupRef.temp}°C à ${this.savedSetupRef.alt}m
+                `;
+            }
+
+            calculateDensity() {
+                const t = parseFloat(document.getElementById("calcTemp").value);
+                const p = parseFloat(document.getElementById("calcPres").value);
+                const kelvin = t + 273.15;
+                const currentDensity = (p * 100) / (287.05 * kelvin);
+                const rad = Math.round((currentDensity / 1.225) * 100);
+
+                let advise = "Conditions nominales standard.";
+                if (rad < 94) advise = "Air rare. Fermer le pointeau principal de 1/8 de tour pour éviter l'engorgement.";
+                if (rad > 105) advise = "Air très dense chargé en oxygène. Ouvrir la richesse de 1/8 de tour pour protéger l'équipage mobile.";
+
+                document.getElementById("densityResult").innerHTML = `
+                    <div style="font-size:1.1rem; font-weight:700;" class="text-accent">RAD calculated : ${rad}%</div>
+                    <div style="margin-top:0.25rem; font-size:0.8rem; color:var(--text-muted);">${advise}</div>
+                `;
+            }
+
+            calculateAutonomy() {
+                const runtime = parseFloat(document.getElementById("calcRunTime").value);
+                const rest = parseFloat(document.getElementById("calcRestFuel").value);
+
+                if(runtime <= 0 || rest >= 125) {
+                    document.getElementById("autonomyResult").innerText = "Données entrées non conformes.";
+                    return;
+                }
+
+                const consumptionPerMin = (125 - rest) / runtime;
+                const totalSec = (125 / consumptionPerMin) * 60;
+                const mins = Math.floor(totalSec / 60);
+                const secs = Math.round(totalSec % 60);
+
+                document.getElementById("autonomyResult").innerHTML = `
+                    <div>Consommation : <strong class="text-accent">${consumptionPerMin.toFixed(1)} ml/min</strong></div>
+                    <div>Autonomie Maximale : <strong style="color:var(--success);">${mins} min ${secs} sec</strong></div>
+                `;
+            }
+
+            diagnosePlugTool() {
+                const aspect = document.getElementById("toolPlugAspect").value;
+                let text = "";
+
+                switch(aspect) {
+                    case "wet": text = "Carburation trop riche au ralenti ou indice thermique trop froid."; break;
+                    case "grey": text = "Excellent compromis de carburation. Le platine travaille dans sa plage nominale."; break;
+                    case "white": text = "Surchauffe sévère ou détonation destructive. Augmentez la décompression ou ouvrez le pointeau de richesse."; break;
+                    case "broken": text = "Casse mécanique imminente. Vérifiez d'urgence le jeu radial de la bielle."; break;
+                    default: text = "État normal.";
+                }
+
+                document.getElementById("plugToolResult").innerHTML = `<div style="font-size:0.85rem; color:var(--text-main); font-weight:500;">${text}</div>`;
+            }
+
+            renderGlossary() {
+                const container = document.getElementById("glossaryContainer");
+                container.innerHTML = "";
+                GLOSSARY.forEach(item => {
+                    container.innerHTML += `
+                        <div class="glossary-card">
+                            <div class="glossary-term">${item.term}</div>
+                            <p class="text-sm text-muted">${item.def}</p>
+                        </div>
+                    `;
+                });
+            }
+
+            autoSaveDiagnostic() {
+                if (Object.keys(this.userAnswers).length === 0) return;
+                const entry = {
+                    date: new Date().toLocaleString(),
+                    answersCount: Object.keys(this.userAnswers).length,
+                    topCause: this.activeCauses[0].title,
+                    topProb: this.activeCauses[0].probability
+                };
+                this.diagHistory.unshift(entry);
+                if(this.diagHistory.length > 5) this.diagHistory.pop();
+                localStorage.setItem("nitro_diag_history", JSON.stringify(this.diagHistory));
+                this.renderHistory();
+            }
+
+            renderHistory() {
+                const container = document.getElementById("historyList");
+                if(this.diagHistory.length === 0) {
+                    container.innerHTML = `<p class="text-sm text-muted">Aucune archive en mémoire locale.</p>`;
+                    return;
+                }
+                container.innerHTML = "";
+                this.diagHistory.forEach(h => {
+                    container.innerHTML += `
+                        <div class="history-item">
+                            <div style="flex:1; padding-right:0.5rem;">
+                                <strong style="font-size:0.85rem; display:block;">${h.topCause}</strong>
+                                <span style="font-size:0.7rem; color:var(--text-muted);">${h.date} - ${h.answersCount} tests</span>
+                            </div>
+                            <span class="badge badge-warning">${h.topProb}%</span>
+                        </div>
+                    `;
+                });
+            }
+
+            exportStudioData() {
+                const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify({
+                    history: this.diagHistory,
+                    setupRef: this.savedSetupRef,
+                    sessionAnswers: this.userAnswers
+                }));
+                const downloadAnchor = document.createElement('a');
+                downloadAnchor.setAttribute("href", dataStr);
+                downloadAnchor.setAttribute("download", "nitro_studio_atelier.json");
+                document.body.appendChild(downloadAnchor);
+                downloadAnchor.click();
+                downloadAnchor.remove();
+            }
+
+            importStudioData(e) {
+                const fileReader = new FileReader();
+                fileReader.onload = (event) => {
+                    try {
+                        const parsed = JSON.parse(event.target.result);
+                        if(parsed.history) this.diagHistory = parsed.history;
+                        if(parsed.sessionAnswers) this.userAnswers = parsed.sessionAnswers;
+                        localStorage.setItem("nitro_diag_history", JSON.stringify(this.diagHistory));
+                        this.runInferenceEngine();
+                        this.renderHistory();
+                        alert("Données réimportées avec succès.");
+                    } catch(err) {
+                        alert("Format de fichier corrompu.");
+                    }
+                };
+                fileReader.readAsText(e.target.files[0]);
+            }
+        }
+
+        let app;
+        window.addEventListener("DOMContentLoaded", () => {
+            app = new EngineStudioApp();
+            window.app = app;
         });
-
-        // Gestion du bouton de réinitialisation/compteur global
-        const allBtn = document.querySelector('[data-level="all"]');
-        if(allBtn && currentSearch === '') {
-            allBtn.textContent = `Tous les niveaux (${masterDatabase.length})`;
-        }
-
-        if (visibleCount === 0) {
-            noResults.classList.remove('hidden');
-        } else {
-            noResults.classList.add('hidden');
-        }
-    }
-
-    // Handlers
-    levelFilterGroup.addEventListener('click', (e) => {
-        if (e.target.classList.contains('btn')) {
-            document.querySelectorAll('#levelFilterGroup .btn').forEach(btn => btn.classList.remove('active'));
-            e.target.classList.add('active');
-            currentLevel = e.target.getAttribute('data-level');
-            renderCards();
-        }
-    });
-
-    behaviorFilterGroup.addEventListener('click', (e) => {
-        if (e.target.classList.contains('btn')) {
-            document.querySelectorAll('#behaviorFilterGroup .btn').forEach(btn => btn.classList.remove('active'));
-            e.target.classList.add('active');
-            currentBehavior = e.target.getAttribute('data-behavior');
-            renderCards();
-        }
-    });
-
-    searchInput.addEventListener('input', (e) => {
-        currentSearch = e.target.value;
-        renderCards();
-    });
-
-    // Initialisation globale
-    renderCards();
-</script>
+    </script>
 </body>
 </html>
